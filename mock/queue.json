@@ -1,0 +1,7 @@
+[
+  {"id":1,"shopName":"麻吉寿司（天河城店）","status":0,"tableType":"小桌","tableNum":"3","tableLeft":"20","tableName":"A22","tableTime":"2017-04-05  16：28：30"},
+  {"id":2,"shopName":"饭店2","status":1,"tableType":"小桌","tableNum":"3","tableLeft":"20","tableName":"A22","tableTime":"2017-04-05  16：28：30"},
+  {"id":3,"shopName":"饭店3","status":2,"tableType":"中桌","tableNum":"4","tableLeft":"20","tableName":"C22","tableTime":"2017-04-01  16：28：30"},
+  {"id":4,"shopName":"饭店4","status":2,"tableType":"大桌","tableNum":"3","tableLeft":"10","tableName":"A82","tableTime":"2017-03-05  16：28：30"},
+  {"id":5,"shopName":"饭店5","status":2,"tableType":"小桌","tableNum":"3","tableLeft":"1","tableName":"A12","tableTime":"2016-04-05  16：28：30"}
+]

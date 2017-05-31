@@ -1,0 +1,49 @@
+@charset "UTF-8";
+/**
+ * Created by Janus on 2016.08.17.
+ */
+
+@function p2r($px, $base-font-size: 75.0px) {
+  @return ($px / $base-font-size) * 1rem;
+}
+
+@mixin font-dpr($font-size) {
+  font-size: $font-size;
+  [data-dpr="2"] & {
+    font-size: $font-size * 2;
+  }
+  [data-dpr="3"] & {
+    font-size: $font-size * 3;
+  }
+}
+
+@mixin ellipsis($width){
+  @if unit($width) == "px" {
+    width: p2r($width);
+  } @else {
+    width: $width;
+  }
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+}
+
+@mixin linesEllipsis($line){
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: $line;
+  -webkit-box-orient: vertical;
+}
+
+@mixin bg-image($url){
+  background-size:100% 100%;
+  background-image:url($url + ".png");
+  [data-dpr="2"] &{
+    background-image:url($url + "@2x.png");
+  }
+  [data-dpr="3"] &{
+    background-image:url($url + "@3x.png");
+  }
+}
