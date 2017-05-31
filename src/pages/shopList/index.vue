@@ -15,7 +15,7 @@
     <div class="tips" v-else>
       <div>无法获取位置信息</div>
       <div>请重新开启定位或手动选择定位城市</div>
-      <div class="btn-location">开启定位</div>
+      <div class="btn-location" @click="location">开启定位</div>
     </div>
     <div class="btn-my-odder" @click="myNum" ref="myOdder">我的排单号</div>
   </div>
@@ -24,11 +24,16 @@
 <script>
   import Shop from './template/Shop.vue'
   import axios from 'axios';
+  import location from '../../utils/location.js'
   export default{
     components:{
       Shop
     },
     methods:{
+      //定位
+      location(){
+        location();
+      },
       //请求
       fetchData(){
         this.loading=true;
@@ -74,13 +79,14 @@
       this.$nextTick(function () {
         this.shopListContainerHeight();
       })
-
       this.fetchData();
+    },
+    props:{
+      hasLocation:false,//true为已成功定位,
     },
     data(){
       return{
-        hasLocation:true,//true为已成功定位,
-        hasQueue:false,//false为没有队可排
+        hasQueue:true,//false为没有队可排
         shopListHeight:'1200px',
         loading:true,
         page:0,

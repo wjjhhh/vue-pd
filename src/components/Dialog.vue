@@ -2,7 +2,7 @@
   <div class="dialogContainer">
     <div class="dialog">
       <header>{{dTitle}}</header>
-      <div class="content"><p>{{dContent}}</p></div>
+      <div class="content"><p>{{content}}</p></div>
       <slot name="btns"></slot>
     </div>
   </div>
@@ -14,10 +14,12 @@
     methods:{
 
     },
+    props:{
+      content:'',
+    },
     data(){
       return{
         dTitle:'取消排队',
-        dContent:'取消后不可撤回，取号服务费不退还，确定取消吗？'
       }
     }
   }

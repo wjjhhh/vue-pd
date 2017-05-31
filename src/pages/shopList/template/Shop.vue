@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="shop" @click="goShop">
+    <div class="shop" @click="goShop(shop.id)">
       <img class="shop-logo" v-bind:src="shop.shoplogo"/>
       <div class="shop-info">
         <div class="shop-name">{{shop.name}}</div>
@@ -31,10 +31,13 @@
       }
     },
     methods:{
-      goShop(){
+      goShop(id){
         console.log('进入商店');
         this.$router.push({
-          'name':'shopDetail'
+          name:'shopDetail',
+          params:{
+            shopId:id
+          }
         })
       },
     }
@@ -47,6 +50,7 @@
     padding:p2r(24px) p2r(24px) 0;
     border-top: p2r(12px) solid #f5f5f5;
     overflow: hidden;
+    background-color: #fff;
   }
   .shop{
     width:100%;

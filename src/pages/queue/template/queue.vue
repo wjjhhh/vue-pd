@@ -1,5 +1,5 @@
 <template>
-  <div :class="queue.status==0?'queue1':'queue0'" class='queue' @click="gotoShop(queue.id)">
+  <div :class="queue.status==0?'queue1':'queue0'" class='queue' @click="gotoShop(queue.id,queue.status)">
     <div class="shopName">{{queue.shopName}}</div>
     <div class="table">
       <div class="tableType">
@@ -28,10 +28,11 @@
       gotoShop(id,status){
         console.log('进入排单号详情')
         this.$router.push({
-          'name':'queueDetail',
-//          params:{
-//            oddNumber:id
-//          }
+          name:'queueDetail',
+          params:{
+            oddNumber:id,
+            status:status
+          }
         })
       }
     }

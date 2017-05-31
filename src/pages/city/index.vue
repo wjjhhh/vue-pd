@@ -10,16 +10,22 @@
     <div class="citys">
       <ul v-for="item in citys">
         <li class="city-index">{{item.index}}</li>
-        <li v-for="i in item.data" class="city-list">{{i.name}}</li>
+        <li v-for="i in item.data" class="city-list" @click="chooseCity(i.name)">{{i.name}}</li>
       </ul>
     </div>
+    <Loading v-show="isLoading"></Loading>
   </div>
 </template>
 <script>
   import axios from 'axios';
+  import Loading from '../../components/Loading';
   export default{
+    components:{
+      Loading,
+    },
     data(){
       return{
+        isLoading:true,//loading状态
         citys:[],
         letter:[],
 //        letter:["A","B","C","D","E","F","G","H","I","J","k","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
@@ -37,6 +43,7 @@
     },
     methods:{
       fetchData(){
+        this.isLoading=false;
         let url='http://localhost:8080/mock/city.json';
         var _this=this;
         axios.get(url).then(function(response){
@@ -78,7 +85,11 @@
         this.letter=_dest.map(function(item){
           return item.index;
         })
-        console.log(_letter);
+//        console.log(_letter);
+      },
+      //点击相应城市
+      chooseCity(name){
+        console.log(name)
       },
     },
 

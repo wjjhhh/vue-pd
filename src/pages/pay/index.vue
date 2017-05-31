@@ -14,9 +14,17 @@
 </template>
 <script>
   export default{
+    data(){
+      return{
+
+      }
+    },
     methods:{
       pay(){
         console.log('确认支付')
+        this.$router.push({
+          name:'getNum'
+        })
       }
     }
   }

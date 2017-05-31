@@ -2,7 +2,7 @@
   <div>
     <Queue></Queue>
     <div class="cancelQueue" @click="dialogShow=true">取消排队</div>
-    <DDialog v-if="dialogShow">
+    <DDialog v-if="dialogShow" v-bind:content="content">
       <div slot="btns" class="btns">
         <span>确定</span>
         <span @click="dialogShow=false">取消</span>
@@ -11,8 +11,8 @@
   </div>
 </template>
 <script>
-  import Queue from '../../components/Queue.vue'
-  import DDialog from '../../components/Dialog.vue'
+  import Queue from '../../components/Queue.vue'//排队单组件
+  import DDialog from '../../components/Dialog.vue'//对话框组件
   export default{
     name:'queueDetail',
     components:{
@@ -23,17 +23,20 @@
       fetchData(){
 
       },
-
       cancelFun(){
         console.log('取消排队')
       }
+    },
+    mounted(){
+      console.log(this.$route.params.status)
     },
     data(){
       return{
         dialogShow:false,
         queueDetailData:[
 
-        ]
+        ],
+        content:'取消后不可撤回，取号服务费不退还，确定取消吗？'
       }
 
     }

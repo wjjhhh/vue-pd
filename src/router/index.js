@@ -13,6 +13,7 @@ const GetNum = resolve => require(['@/pages/getNum/index'], resolve);//取号成
 const GetFail = resolve => require(['@/pages/getFail/index'], resolve);//取号失败页面
 const Empty = resolve => require(['@/pages/empty/index'], resolve);//空空如也页面
 const Pay = resolve => require(['@/pages/pay/index'], resolve);//支付页面
+import Loading from '@/components/Loading'
 Vue.use(Router)
 
 export default new Router({
@@ -20,12 +21,12 @@ export default new Router({
     {
       path: '/',
       component: Index,
-      //redirect:'shopList',
+      redirect:'shopList',
       children:[
         {
           path:'/shopList',
           name:'shopList',
-          component:shopList
+          component:shopList,
         },
         {
           path:'/city',
@@ -36,7 +37,7 @@ export default new Router({
       ]
     },
     {
-      path:'/shopDetail',
+      path:'/shopDetail/:shopId',
       name:'shopDetail',
       component:ShopDetail
     },
@@ -49,16 +50,9 @@ export default new Router({
       path:'/queue',
       name:'queue',
       component:Queue,
-      //children:[
-      //  {
-      //    path:'/queueDetail',
-      //    name:'queueDetail',
-      //    component:QueueDetail
-      //  }
-      //]
     },
     {
-      path:'/queueDetail',
+      path:'/queueDetail/:oddNumber/:status',
       name:'queueDetail',
       component:QueueDetail
     },
@@ -74,8 +68,9 @@ export default new Router({
     },
     {
       path:'/pay',
-      name:'Pay',
+      name:'pay',
       component:Pay
-    }
+    },
+
   ]
 })

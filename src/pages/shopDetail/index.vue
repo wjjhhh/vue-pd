@@ -12,7 +12,7 @@
         <div class="tableNum"><span class="num">{{item.num}}</span><span>桌</span></div>
       </li>
     </ul>
-    <div class="btn-getNum" @click="getNumFun">￥{{getNum|priceFilter}}取号</div>
+    <div class="btn-getNum" @click="getNumFun"><span v-if="!free">￥{{getNum|priceFilter}}</span>取号</div>
     <div class="getNum">
       <header>取号优惠</header>
       <div class="couponInfo"><span class="logo"></span><div>取号成功送【xxxxxxxxx】优惠券一张<span style="color:#bfbfbf;">（已派完）</span></div></div>
@@ -82,6 +82,18 @@
       bus.$on('closeCheckPhone',function(){
         _this.checkPhoneDialog=false;
       })
+      bus.$on('chooseEatNum',function(num){
+        if(!_this.free){
+          _this.$router.push({
+            name:'pay'
+          })
+        }
+        else{
+          _this.$router.push({
+            name:'getNum'
+          })
+        }
+      })
     },
     data(){
       return{
@@ -95,7 +107,8 @@
         ],
         min:0,//可选人数最小
         max:0,//可选人数最多,
-        numRange:[0,0]
+        numRange:[0,0],
+        free:true,//true:免费取号
       }
     }
   }

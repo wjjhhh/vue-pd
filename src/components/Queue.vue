@@ -1,28 +1,31 @@
 <template>
   <div class="successcontainer">
     <div class="getSuccess">
-      <div class="logo-success"></div>
-      <div class="suc">取号成功</div>
+      <!--<div v-if="status==0">-->
+        <!--<div class="logo-success"></div>-->
+        <!--<div class="suc">取号成功</div>-->
+      <!--</div>-->
+      <slot name="success"></slot>
       <div class="detail">
         <div class="line1">
-          <span class="shopName">麻吉寿司（天河店）</span>
-          <span class="numName">A22</span>
+          <span class="shopName">{{coupon.shopName}}</span>
+          <span class="numName">{{coupon.numName}}</span>
         </div>
         <div class="line2 line">
-          <span class="time">2017-04-05 16:28:30</span>
-          <span class="table">小桌(1-2)</span>
+          <span class="time">{{coupon.time}}</span>
+          <span class="table">{{coupon.table}}</span>
         </div>
         <div class="line3 line">
           <span>还需等待</span>
-          <span class="num">20桌</span>
+          <span class="num">{{coupon.num}}桌</span>
         </div>
         <div class="line4 line">
           <span>支付金额</span>
-          <span>2元</span>
+          <span>{{coupon.cost}}元</span>
         </div>
         <div class="line5 line">
           <span>已等待</span>
-          <span class="waitTime">0分钟</span>
+          <span class="waitTime">{{coupon.waitTime}}分钟</span>
         </div>
       </div>
       <div class="tips">听到叫号请到迎宾台，过号不作废，过号一桌自动顺延3个号</div>
@@ -41,7 +44,6 @@
           <span v-else-if="couponGet==3">已使用</span>
         </span>
       </div>
-
     </div>
   </div>
 </template>
@@ -57,7 +59,16 @@
     },
     data(){
       return{
-        couponGet:1,//0：领取，1：立即使用，2:已领完，3：已使用
+        couponGet:1,//0：领取，1：立即使用，2:已领完，3：已使用,
+        coupon:{
+          shopName:'麻吉寿司（天河店）',
+          numName:'A22',
+          time:'2017-04-05 16:28:30',
+          table:'小桌(1-2)',
+          num:20,
+          cost:2,
+          waitTime:20
+        }
       }
     }
   }

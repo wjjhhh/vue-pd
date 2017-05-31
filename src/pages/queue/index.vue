@@ -7,28 +7,27 @@
       </div>
       <Queue :queue="queue" v-for='queue in queueList0' :key="queue.id"></Queue>
     </div>
+    <Loading v-show="isLoading"></Loading>
   </div>
 </template>
 
 <script>
   import Queue from './template/queue.vue';
+  import Loading from '../../components/Loading.vue'
   import axios from 'axios';
   export default{
     components:{
-      Queue
+      Queue,
+      Loading
     },
     created(){
       setTimeout(()=>{
+        this.isLoading=false;
         console.log('请求券')
       this.fetchData();
     },300)
     },
-    mounted(){
 
-    },
-    computed(){
-
-    },
     methods:{
       dealQueueList(){
         this.queueList0=this.queueList.filter(function(item,i){
@@ -56,6 +55,7 @@
         ],
         queueList0:[],
         queueList1:[],
+        isLoading:true,
       }
     }
   }

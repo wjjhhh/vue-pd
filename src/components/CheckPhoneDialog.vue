@@ -74,7 +74,8 @@
       },
       //选择就就参人数
       chooseEatNum(num){
-        console.log(num+'人就餐')
+//        console.log(num+'人就餐')
+        bus.$emit('chooseEatNum',num);
         this.cancelEat();
       },
       //绑定
@@ -98,7 +99,7 @@
         error:'验证码错误',//验证码框错误提示
         check:false,//true为已验证，否则为false
         eatnum:[1,2,3,4],//就餐选择人数选项[1,2,3,4],
-        noTime:true,//true为达到取号上限,
+        noTime:false,//true为达到取号上限,
         noTimeShow:false,//无法取号弹窗
       }
     }
