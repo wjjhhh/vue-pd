@@ -90,6 +90,13 @@
       //点击相应城市
       chooseCity(name){
         console.log(name)
+        this.$router.push({
+          name:'shopList',
+          params:{
+            city:name
+          },
+
+        })
       },
     },
 

@@ -28,7 +28,7 @@
       }
     },
     mounted(){
-      console.log(this.$route.params.status)
+//      console.log(this.$route.params.status)
     },
     data(){
       return{

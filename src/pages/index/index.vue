@@ -15,6 +15,8 @@
   import Search from '../../components/search'
   import ShopList from '../shopList/index'
   import loading from '../../components/Loading'
+  import utils from '../../utils/index.js'
+
 
   export default{
     data(){
@@ -61,6 +63,7 @@
       console.log('钩子beforeRouteEnter')
       next(vm => {
         document.title = ""
+      //进入城市列表，搜索框需隐藏
         if(to.name=='city'){
           vm.isShow=false;
         }
@@ -78,6 +81,7 @@
       }
       else{
           this.isShow=true;
+          this.position=to.params.city
       }
       next();
     },

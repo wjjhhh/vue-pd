@@ -44,7 +44,16 @@
           _this.queueList=response.data;
           _this.dealQueueList()
         })
-      }
+      },
+      test(){
+        if(this.$route.name=='queueDetail'){
+          console.log('text')
+        }
+
+      },
+    },
+    watch:{
+      '$route':'test'
     },
     data(){
       return{

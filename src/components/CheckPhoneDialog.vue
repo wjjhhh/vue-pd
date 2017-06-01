@@ -22,7 +22,7 @@
         <footer @click="cancelEat">取消</footer>
       </div>
     <!--无法取号弹窗-->
-      <div class="noTimeDialog" v-if="check&&noTime&&noTimeShow">
+      <div class="noTimeDialog" v-if="check&&noTime">
         <header>无法取号</header>
         <div class="canTip">您已达今日取号次数上限</div>
         <span class="btn-sure" @click="closeNoTime">确定</span>
@@ -81,12 +81,12 @@
       //绑定
       bindFun(){
         this.check=true;
-        this.noTimeShow=true;
+
         //this.close();
       },
       //关闭无法取号弹窗
       closeNoTime(){
-        this.noTimeShow=false;
+
         this.close();
       }
     },
@@ -97,10 +97,10 @@
         time:60,//倒数实时默认60s
         second:60,//倒数的时间(s)
         error:'验证码错误',//验证码框错误提示
-        check:false,//true为已验证，否则为false
+        check:true,//true为已验证，否则为false
         eatnum:[1,2,3,4],//就餐选择人数选项[1,2,3,4],
-        noTime:false,//true为达到取号上限,
-        noTimeShow:false,//无法取号弹窗
+        noTime:true,//true为达到取号上限,
+
       }
     }
   }
