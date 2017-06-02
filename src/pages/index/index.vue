@@ -3,11 +3,12 @@
     <Search class="search" ref="search" v-bind:isShow="isShow" :positioning="positioning" :position="position"></Search>
     <loading v-show="isLoading"></loading>
     <keep-alive>
-      <router-view  :style="{height:containerHeight}" style="overflow: scroll;" :hasLocation="hasLocation">
+      <router-view  class='router' :style="{height:containerHeight}" style="overflow: scroll;" :hasLocation="hasLocation">
         <!--<ShopList class="shoplists" :style="{height:shopListHeight}">-->
         <!--</ShopList>-->
       </router-view>
     </keep-alive>
+    <!--<div class="btn-my-odder" @click="myNum" ref="myOdder" v-if="isShow">我的排单号</div>-->
   </div>
 </template>
 
@@ -35,12 +36,10 @@
       loading
     },
     methods:{
-      shopContainerHeight(){
-        this.containerHeight=window.innerHeight-this.$refs.search.$el.offsetHeight+'px'
-      },
       //定位
       location(){
-        var r=Math.random();
+//        var r=Math.random();
+         var r=1;
         this.positioning=false
         if(r>0.5){
           console.log('定位成功');
@@ -52,12 +51,31 @@
           this.hasLocation=false;
         }
       },
+      myNum(){
+        console.log('进入我的排单号')
+        this.$router.push({
+          'name':'queue',
+          params:{
 
+          }
+        })
+      },
+      //高度调整
+      listContainerHeight(){
+        this.containerHeight=window.innerHeight-this.$refs.search.$el.offsetHeight+'px';
+        console.log('父this.containerHeight：'+this.containerHeight)
+      },
     },
     mounted(){
-      this.shopContainerHeight();
-      this.isLoading=false
-      setTimeout(()=>this.location(),1000)
+      this.$nextTick(function(){
+        this.listContainerHeight();
+      })
+      window.addEventListener("resize", this.listContainerHeight);
+//      this.isLoading=false
+      setTimeout(()=>{
+        this.isLoading=false;
+        this.location();
+    },1000)
     },
     beforeRouteEnter (to, from, next) {
       console.log('钩子beforeRouteEnter')
@@ -67,6 +85,9 @@
         if(to.name=='city'){
           vm.isShow=false;
         }
+        else{
+
+        }
     })
     },
     beforeRouteUpdate (to, from, next) {
@@ -75,13 +96,14 @@
       // 由于会渲染同样的 Foo 组件，因此组件实例会被复用。而这个钩子就会在这个情况下被调用。
       // 可以访问组件实例 `this`
       console.log('钩子beforeRouteUpdate')
-      //进入城市列表，搜索框需隐藏
+      //进入城市列表，搜索框和我的排单号需隐藏
       if(to.name=='city'){
           this.isShow=false;
+
       }
       else{
           this.isShow=true;
-          this.position=to.params.city
+          this.position=to.params.city||'选择城市'
       }
       next();
     },
@@ -97,7 +119,7 @@
     width:100%;
     height: p2r($h);
     line-height: p2r($h);
-    position: relative;
+    position: fixed;
     top:0;
     left:0;
     box-sizing: border-box;
@@ -105,9 +127,25 @@
     z-index: 2;
 
   }
+  .router{
+    margin-top: p2r(100px);
+  }
   .shoplists{
     overflow: auto;
     -webkit-overflow-scrolling: touch;
   }
-
+  .btn-my-odder{
+  @include font-dpr(15px);
+    $h:p2r(100px);
+    width:100%;
+    height: $h;
+    line-height: $h;
+    color:#fff;
+    background-color: $color;
+    text-align: center;
+    position: fixed;
+    z-index:2;
+    bottom:0;
+    left:0;
+  }
 </style>
