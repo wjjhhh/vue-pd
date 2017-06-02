@@ -4,8 +4,6 @@
     <loading v-show="isLoading"></loading>
     <keep-alive>
       <router-view  class='router' :style="{height:containerHeight}" style="overflow: scroll;" :hasLocation="hasLocation">
-        <!--<ShopList class="shoplists" :style="{height:shopListHeight}">-->
-        <!--</ShopList>-->
       </router-view>
     </keep-alive>
     <!--<div class="btn-my-odder" @click="myNum" ref="myOdder" v-if="isShow">我的排单号</div>-->
@@ -16,8 +14,7 @@
   import Search from '../../components/search'
   import ShopList from '../shopList/index'
   import loading from '../../components/Loading'
-  import utils from '../../utils/index.js'
-
+  import $utils from '../../utils/index.js'
 
   export default{
     data(){
@@ -44,7 +41,7 @@
         if(r>0.5){
           console.log('定位成功');
           this.hasLocation=true;
-          this.position='广州市'
+          this.position='xx市'
         }
         else{
           console.log('定位失败');
@@ -63,8 +60,25 @@
       //高度调整
       listContainerHeight(){
         this.containerHeight=window.innerHeight-this.$refs.search.$el.offsetHeight+'px';
-        console.log('父this.containerHeight：'+this.containerHeight)
       },
+      //微信api定位
+      getLocation(){
+
+      }
+    },
+    created(){
+      if ($utils.isWeixinBrowser()) {
+        wx.getLocation({
+          type: 'gcj02',// 火星坐标
+          success: (res) => {
+//            this.$store.dispatch("setUserPoint", res);
+//            this.getAttr(res.latitude, res.longitude);
+          },
+          complete: () => {
+
+          }
+        });
+      } else { console.error("请在微信客户端中打开");}
     },
     mounted(){
       this.$nextTick(function(){
@@ -73,9 +87,9 @@
       window.addEventListener("resize", this.listContainerHeight);
 //      this.isLoading=false
       setTimeout(()=>{
-        this.isLoading=false;
-        this.location();
-    },1000)
+          this.isLoading=false;
+          this.location();
+      },1000)
     },
     beforeRouteEnter (to, from, next) {
       console.log('钩子beforeRouteEnter')
@@ -99,7 +113,6 @@
       //进入城市列表，搜索框和我的排单号需隐藏
       if(to.name=='city'){
           this.isShow=false;
-
       }
       else{
           this.isShow=true;

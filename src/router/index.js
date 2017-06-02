@@ -21,15 +21,15 @@ export default new Router({
     {
       path: '/',
       component: Index,
-      redirect:'shopList',
+      // redirect:'shopList',
       children:[
         {
-          path:'/shopList',
+          path:':shopList',
           name:'shopList',
           component:shopList,
         },
         {
-          path:'/city',
+          path:'city/:shopList',
           name:'city',
           component:City
         },
@@ -47,7 +47,7 @@ export default new Router({
       component:GetNum
     },
     {
-      path:'/queue',
+      path:'/queue/:userId',
       name:'queue',
       component:Queue,
     },

@@ -95,7 +95,6 @@
           params:{
             city:name
           },
-
         })
       },
     },

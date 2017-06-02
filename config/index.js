@@ -6,9 +6,9 @@ module.exports = {
     env: require('./prod.env'),
     index: path.resolve(__dirname, '../dist/index.html'),
     assetsRoot: path.resolve(__dirname, '../dist'),
-    assetsSubDirectory: 'static',
+    assetsSubDirectory: 'vue/waimai/',
     assetsPublicPath: '/',
-    productionSourceMap: true,
+    productionSourceMap: false,
     // Gzip off by default as many popular static hosts such as
     // Surge or Netlify already gzip all static assets for you.
     // Before setting to `true`, make sure to:
@@ -25,9 +25,29 @@ module.exports = {
     env: require('./dev.env'),
     port: 8080,
     autoOpenBrowser: true,
+    openPath: "/#/10549840601068216320", //对应的商户
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+      '/waimai/': {
+        target: 'http://m.zb25.com.cn',
+        changeOrigin: true,
+        onProxyReq: function (proxyReq, req, res) {
+          // proxyReq.setHeader('Cookie', '10888888888888888888=oFS7FjqIuhJSI0jk2ZSh_fYmqOaA'); //
+          proxyReq.setHeader('Cookie', '10549840601068216320=oHQU6wI8nofHxSOIbXF51BfsiQzY'); //  集成环境
+          // proxyReq.setHeader('Cookie', '10549840601068216320=ous64uJizmxJPi_8yu6VHdB8vCFU');
+        },
+      },
+      '/kq/': {
+        target: 'http://m.zb25.com.cn',
+        changeOrigin: true,
+        onProxyReq: function (proxyReq, req, res) {
+          // proxyReq.setHeader('Cookie', '10888888888888888888=oFS7FjqIuhJSI0jk2ZSh_fYmqOaA'); //
+          proxyReq.setHeader('Cookie', '10549840601068216320=oHQU6wI8nofHxSOIbXF51BfsiQzY'); //  集成环境
+          // proxyReq.setHeader('Cookie', '10549840601068216320=ous64uJizmxJPi_8yu6VHdB8vCFU');
+        },
+      }
+    },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
     // (https://github.com/webpack/css-loader#sourcemaps)

@@ -113,10 +113,11 @@
       },
       myNum(){
         console.log('进入我的排单号')
+        console.log(this.$router)
         this.$router.push({
           'name':'queue',
           params:{
-
+              userId:1
           }
         })
       },

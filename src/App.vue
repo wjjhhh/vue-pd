@@ -14,8 +14,12 @@ export default {
   methods:{
     initWX(){
       console.log('微信初始化')
-//      var router = this.$router.resolve(window.location.hash.replace("#", ""));
-//      console.log(router.route.params)
+      var router = this.$router.resolve(window.location.hash.replace("#", ""));
+      axios.get('/kq/kqdetail/jsapi/config/'+router.route.params.shopList).then((ret)=>{
+        if(ret.success){
+
+        }
+      })
 //      console.log('/kq/kqdetail/jsapi/config/' + router.route.params.shopSerial)
 //      axios.get('/kq/kqdetail/jsapi/config/' + router.route.params.shopSerial , {}).then((ret) => {
 //        console.log('/kq/kqdetail/jsapi/config/' + router.route.params.shopSerial)
@@ -39,6 +43,9 @@ export default {
   },
   created(){
     this.initWX();
+    wx.error((res)=>{
+        console.error('微信jsdk配置失败: '+res);
+    })
   },
   beforeRouteLeave(to,from,next){
     console.log(to);
