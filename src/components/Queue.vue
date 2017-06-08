@@ -30,7 +30,7 @@
       </div>
       <div class="tips">听到叫号请到迎宾台，过号不作废，过号一桌自动顺延3个号</div>
     </div>
-    <div class="coupon">
+    <div class="coupon" v-if="couponGet!=2">
       <div class="logo-coupon"></div>
       <div class="couponDetail">
         <div>
@@ -59,7 +59,7 @@
     },
     data(){
       return{
-        couponGet:1,//0：领取，1：立即使用，2:已领完，3：已使用,
+        couponGet:2,//0：领取，1：立即使用，2:已领完，3：已使用,
         coupon:{
           shopName:'麻吉寿司（天河店）',
           numName:'A22',

@@ -57,7 +57,7 @@
       //可选人数计算
       calNumRange(){
         let len=this.table.length;
-            let max=this.table[len-1].max;
+        let max=this.table[len-1].max;
         this.min=this.table[0].min;
         this.max=max==0?20:max;
         this.createRange(this.min,this.max)

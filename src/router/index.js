@@ -42,7 +42,7 @@ export default new Router({
       component:ShopDetail
     },
     {
-      path:'/getNum',
+      path:'/shopDetail/:shopId/getNum',
       name:'getNum',
       component:GetNum
     },
@@ -62,12 +62,12 @@ export default new Router({
       component:Empty
     },
     {
-      path:'/getFail',
+      path:'/shopDetail/:shopId/getFail',
       name:'getFail',
       component:GetFail
     },
     {
-      path:'/pay',
+      path:'/shopDetail/:shopId/pay',
       name:'pay',
       component:Pay
     },

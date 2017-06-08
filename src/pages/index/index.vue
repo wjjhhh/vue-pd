@@ -59,7 +59,8 @@
       },
       //高度调整
       listContainerHeight(){
-        this.containerHeight=window.innerHeight-this.$refs.search.$el.offsetHeight+'px';
+            console.log('高度是:',window.innerHeight)
+            this.containerHeight=window.innerHeight-this.$refs.search.$el.offsetHeight+'px';
       },
       //微信api定位
       getLocation(){

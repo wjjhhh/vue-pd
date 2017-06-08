@@ -11,6 +11,7 @@
     methods:{
       back(){
         console.log('返回')
+        window.history.back();
       }
     }
   }

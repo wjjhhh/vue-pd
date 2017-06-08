@@ -59,13 +59,17 @@
     },
     methods:{
       getCoupon(){
-        if(this.couponGet==2)return;
-        console.log('进入券详情页')
+//        if(this.couponGet==2)return;
+//
+//        console.log('进入券详情页')
       },
+    },
+    mounted(){
+      console.log(this.couponGet)
     },
     data(){
       return{
-        couponGet:1,//0：领取，1：立即使用，2:已领完，3：已使用
+        couponGet:2,//0：领取，1：立即使用，2:已领完，3：已使用
 
       }
     }
