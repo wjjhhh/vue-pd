@@ -4,61 +4,65 @@
       <nav>餐桌类型</nav><nav>等待桌数</nav>
     </header>
     <ul>
-      <li class="tables" v-for="item in table">
+      <li class="tables" v-for="item in lineUpList.List">
         <div class="tableDetail">
-          <div class="tableType">{{item.type}}</div>
-          <div class="tablePer">{{item.min}}{{item.max==0?'人以上':-item.max+'人'}}</div>
+          <div class="tableType">{{item.tableName}}</div>
+          <div class="tablePer">{{item.lowerNumber}}{{item.limitNumber==0?'人以上':-item.limitNumber+'人'}}</div>
         </div>
-        <div class="tableNum"><span class="num">{{item.num}}</span><span>桌</span></div>
+        <div class="tableNum"><span class="num">{{item.waittingNum}}</span><span>桌</span></div>
       </li>
     </ul>
-    <div class="btn-getNum" @click="getNumFun"><span v-if="!free">￥{{getNum|priceFilter}}</span>取号</div>
+    <div class="btn-getNum" @click="getNumFun"><span v-if="lineUpList.isServiceCharge">￥{{lineUpList.serviceCharge|priceFilter}}</span>取号</div>
     <div class="getNum">
       <header>取号优惠</header>
-      <div class="couponInfo"><span class="logo"></span><div>取号成功送【xxxxxxxxx】优惠券一张<span style="color:#bfbfbf;">（已派完）</span></div></div>
-      <div class="explainInfo"><span class="logo"></span><div>等待1小时等待1小时等待1小时等待1小时等待1小时等待1小时等待1小时等待1小时等待1小时等待1小时等待1小时</div></div>
+      <!--<div class="couponInfo"><span class="logo"></span><div>取号成功送【xxxxxxxxx】优惠券一张<span style="color:#bfbfbf;">（已派完）</span></div></div>-->
+      <div class="explainInfo" v-if="lineUpList.isShowInfo">
+        <span class="logo"></span>
+        <div ref="line"></div>
+      </div>
     </div>
 
     <div class="getNumRule">
       <header>取号规则：</header>
       <ul>
-        <li>排队取号仅限当前时间段使用，过号一桌自动顺延三个号</li>
-        <li>排队取号仅限当前时间段使用，过号一桌自动顺延三个号</li>
-        <li>排队取号仅限当前时间段使用，过号一桌自动顺延三个号</li>
-        <li>排队取号仅限当前时间段使用，过号一桌自动顺延三个号</li>
+        <li>排队取号仅限当前时间段使用，过号一桌自动顺延三个号。</li>
+        <li v-if="lineUpList.isServiceCharge">为避免线上随意取号，造成空号码影响排队秩序，商家向您收取线上取号服务费。</li>
+        <li v-if="lineUpList.isServiceCharge">如过号或若您行程有变，取号支付服务费用概不退还。</li>
       </ul>
     </div>
     <CheckPhoneDialog v-if="checkPhoneDialog" v-bind:min="min" v-bind:max="max" v-bind:numRange="numRange"></CheckPhoneDialog>
+    <Loading v-show="loading"></Loading>
   </div>
 </template>
 <script>
   import checkPhoneDialog from '../../components/CheckPhoneDialog.vue'
   import {bus} from '../../utils/bus.js'
   import priceFilter from '../../filters/price.js'
+  import Loading from '../../components/Loading.vue'
+  import axios from 'axios';
   export default{
     components:{
-      'CheckPhoneDialog':checkPhoneDialog
+      'CheckPhoneDialog':checkPhoneDialog,
+      Loading
     },
     mounted(){
-      this.tableSort(this.calNumRange);
-
     },
     filters:{
-      priceFilter
+      priceFilter,
     },
     methods:{
       //桌排序
-      tableSort(callback){
-        this.table=this.table.sort(function(a,b){
-          return a.min- b.min;
+      tableSort(){
+        this.lineUpList.List=this.lineUpList.List.sort(function(a,b){
+          return a.lowerNumber- b.lowerNumber;
         })
-        callback();
+        this.calNumRange(this.lineUpList.List);
       },
       //可选人数计算
-      calNumRange(){
-        let len=this.table.length;
-        let max=this.table[len-1].max;
-        this.min=this.table[0].min;
+      calNumRange(arr){
+        let len=arr.length;
+        let max=arr[len-1].limitNumber;
+        this.min=arr[0].lowerNumber;
         this.max=max==0?20:max;
         this.createRange(this.min,this.max)
       },
@@ -71,44 +75,94 @@
         }
         this.numRange=_arr;
       },
+      //取号优惠信息换行
+      newline(str){
+          var str1='<div>';
+          var str2=str.replace(/\n|\r|(\r\n)|(\u0085)|(\u2028)|(\u2029)/g,'</div><div>');
+          str2+='</div>';
+          var div=document.createElement('div');
+          div.innerHTML=str1+str2
+          this.$nextTick(()=>{
+              this.$refs.line.appendChild(div)
+          })
+      },
       getNumFun(){
         if(this.hasBind){
           this.checkPhoneDialog=true;
         }
       },
+      //请求数据
+      fetchData(){
+        console.log('请求')
+        var url='http://localhost:8080/mock/getShopConfigTable.json';
+        axios.get(url).then((response)=>{
+            this.loading=false;
+            this.lineUpList=response.data.lineUpList;
+            this.tableSort();
+            this.newline(this.lineUpList.discountInfo);
+        }).catch((err)=>{
+            console.warn(err)
+        })
+      }
     },
     created(){
       var _this=this;
       bus.$on('closeCheckPhone',function(){
         _this.checkPhoneDialog=false;
       })
+      //取号，生成订单
       bus.$on('chooseEatNum',function(num){
-        if(!_this.free){
+         //计算人数在哪张桌，得出tableId
+        var arr=_this.lineUpList.List,len=arr.length,tableId;
+        while(len){
+            if(num>=arr[len-1].lowerNumber&&num<=arr[len-1].limitNumber){
+                tableId=arr[len-1].tableId;
+                break;
+            }
+            len--;
+        }
+         var url='';
+          axios.get(url,{
+            params:{
+              shopBranchId:_this.lineUpList.shopBranchId,
+              peopleNum:num,
+              serviceCharge:_this.lineUpList.isServiceCharge,
+              tableId:tableId,
+              userPhone:'',
+              openid:''
+            }
+          }).then((response)=>{
+            if(response.data.success){
+                console.log('创建成功')
+                console.log('相关信息:'+response.data.respMsg)
+            }
+          }).catch((err)=>{
+            console.warn(err);
+          })
+        //需给服务费
+        if(_this.lineUpList.isServiceCharge){
           _this.$router.push({
             name:'pay'
           })
         }
+        //不需给服务费，直接取号
         else{
           _this.$router.push({
             name:'getNum'
           })
         }
       })
+      this.fetchData();
     },
     data(){
       return{
         checkPhoneDialog:false,
         hasBind:true,//true为已经绑定手机，否则为false
-        getNum:2.1,//取号
-        table:[
-          {type:'中桌',min:3,max:15,num:12},
-          {type:'小桌',min:2,max:3,num:6},
-          {type:'大卓',min:16,max:0,num:1}
-        ],
+        numRange:[0,0],
         min:0,//可选人数最小
         max:0,//可选人数最多,
-        numRange:[0,0],
-        free:true,//true:免费取号
+        lineUpList:{},
+        loading:true,
       }
     }
   }
@@ -202,6 +256,8 @@
   .couponInfo,.explainInfo{
     @include font-dpr(12px);
     line-height: p2r(34px);
+    word-wrap: break-word;
+    word-break: break-all;
   }
   .couponInfo,.explainInfo{
     display:flex;
@@ -224,6 +280,7 @@
     }
   }
   .explainInfo{
+    margin:p2r(30px) 0 p2r(14px);
      .logo{
       @include bg-image('../../assets/img/explain');
     }

@@ -29,19 +29,21 @@
     },
 
     methods:{
+       //排队单分组
       dealQueueList(){
         this.queueList0=this.queueList.filter(function(item,i){
-          return item.status!=0
+          return item.orderStatus!=0
         })
         this.queueList1=this.queueList.filter(function(item,i){
-          return item.status==0
+          return item.orderStatus==0
         })
       },
       fetchData(){
         var _this=this;
-        var url='http://localhost:8080/mock/queue.json';
+//        var url='http://localhost:8080/mock/queue.json';
+        var url='/wxQueue/getQueueList';
         axios.get(url).then(function(response){
-          _this.queueList=response.data;
+          _this.queueList=response.data.consumerOrderList;
           _this.dealQueueList()
         })
       },
@@ -58,9 +60,7 @@
     data(){
       return{
         queueList:[
-          {id:1,status:1,num:'A12'},
-          {id:2,status:0,num:'A12'},
-          {id:3,status:1,num:'A12'},
+
         ],
         queueList0:[],
         queueList1:[],

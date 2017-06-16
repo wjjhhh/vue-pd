@@ -1,6 +1,6 @@
 <template>
   <div class="successcontainer">
-    <Queue>
+    <Queue :queueDetailData="queueDetailData">
       <div slot="success">
         <div class="logo-success"></div>
         <div class="suc">取号成功</div>
@@ -53,9 +53,13 @@
 </template>
 <script>
   import Queue from '../../components/Queue.vue'//排队单组件
+  import axios from 'axios';
   export default{
     components:{
       Queue
+    },
+    created(){
+      this.fetchData();
     },
     methods:{
       getCoupon(){
@@ -63,14 +67,27 @@
 //
 //        console.log('进入券详情页')
       },
+      //拉取数据
+      fetchData(){
+          var url='http://localhost:8080/mock/queueDetail.json';
+          axios.get(url,{
+            params:{
+                orderId:123
+            }
+          }).then((response)=>{
+              this.queueDetailData=response.data;
+          }).catch((error)=>{
+              console.warn(error)
+          })
+      }
     },
     mounted(){
       console.log(this.couponGet)
     },
     data(){
       return{
-        couponGet:2,//0：领取，1：立即使用，2:已领完，3：已使用
-
+        couponGet:2,//0：领取，1：立即使用，2:已领完，3：已使用,
+        queueDetailData:[]
       }
     }
   }

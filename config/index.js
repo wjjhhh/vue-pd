@@ -29,8 +29,9 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/waimai/': {
-        target: 'http://m.zb25.com.cn',
+      '/wxQueue/': {
+        // target: 'http://m.zb25.com.cn',
+        target: 'http://localhost:8081',
         changeOrigin: true,
         onProxyReq: function (proxyReq, req, res) {
           // proxyReq.setHeader('Cookie', '10888888888888888888=oFS7FjqIuhJSI0jk2ZSh_fYmqOaA'); //

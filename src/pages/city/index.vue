@@ -44,7 +44,8 @@
     methods:{
       fetchData(){
         this.isLoading=false;
-        let url='http://localhost:8080/mock/city.json';
+//        let url='http://localhost:8080/mock/city.json';
+        let url='/wxQueue/getCityList';
         var _this=this;
         axios.get(url).then(function(response){
           _this.city=response.data;

@@ -1,16 +1,16 @@
 <template>
-  <div :class="queue.status==0?'queue1':'queue0'" class='queue' @click="gotoShop(queue.id,queue.status)">
-    <div class="shopName">{{queue.shopName}}</div>
+  <div :class="queue.orderStatus==0?'queue1':'queue0'" class='queue' @click="gotoShop(queue.shopBranchId,queue.orderStatus)">
+    <div class="shopName">{{queue.branchName}}</div>
     <div class="table">
       <div class="tableType">
-        <span>{{queue.tableNum}}人{{queue.tableType}}</span><span>已取号</span>
+        <span>{{queue.tableName}}</span><span>已取号</span>
       </div>
       <div class="tableStatus">
-        <span>还需等待</span><span class="tableLeft">{{queue.status==0?queue.tableLeft:'--'}}桌</span>
+        <span>还需等待</span><span class="tableLeft">{{queue.orderStatus==0?queue.waittingTableNum:'--'}}桌</span>
       </div>
-      <div class="tableName">{{queue.tableName}}</div>
+      <div class="tableName">{{queue.tableFlag}}</div>
     </div>
-    <div class="tableTime">排号时间：{{queue.tableTime}}</div>
+    <div class="tableTime">排号时间：{{queue.orderTime}}</div>
   </div>
 </template>
 

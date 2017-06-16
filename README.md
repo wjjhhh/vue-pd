@@ -4,7 +4,15 @@
 
 ## Build Setup
 
+
 ``` bash
+
+#安装sass
+npm config set sass-binary-site https://npm.taobao.org/mirrors/node-sass/
+
+#安装全局配置
+npm config set registry http://registry.npm.taobao.org
+
 # install dependencies
 npm install
 

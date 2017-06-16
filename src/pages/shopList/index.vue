@@ -56,10 +56,16 @@
       fetchData(params){
 //        console.log(params)
         this.loading=true;
-        var url='http://localhost:8080/mock/shopList.json';
-        var _this=this;
+//        var url='http://localhost:8080/mock/shopList.json';
+        var url='/wxQueue/getShopList';
         var _tempArr=[];
-        axios.get(url)
+        axios.get(url,{
+          params:{
+            shopId:123,
+            page:this.page,
+            pageSize:this.pageSize
+          }
+        })
         .then((response)=>{
           setTimeout(()=>{
             _tempArr=response.data.shopBranchList;

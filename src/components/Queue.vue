@@ -8,24 +8,24 @@
       <slot name="success"></slot>
       <div class="detail">
         <div class="line1">
-          <span class="shopName">{{coupon.shopName}}</span>
-          <span class="numName">{{coupon.numName}}</span>
+          <span class="shopName">{{queueDetailData.shopBranchId}}</span>
+          <span class="numName">{{queueDetailData.tableFlag}}</span>
         </div>
         <div class="line2 line">
-          <span class="time">{{coupon.time}}</span>
-          <span class="table">{{coupon.table}}</span>
+          <span class="time">{{queueDetailData.takeNumTime}}</span>
+          <span class="table">{{queueDetailData.tableName}}</span>
         </div>
         <div class="line3 line">
           <span>还需等待</span>
-          <span class="num">{{coupon.num}}桌</span>
+          <span class="num">{{queueDetailData.waittingTableNum}}桌</span>
         </div>
         <div class="line4 line">
           <span>支付金额</span>
-          <span>{{coupon.cost}}元</span>
+          <span>{{queueDetailData.serviceCharge}}元</span>
         </div>
         <div class="line5 line">
           <span>已等待</span>
-          <span class="waitTime">{{coupon.waitTime}}分钟</span>
+          <span class="waitTime">{{queueDetailData.waittingTime}}</span>
         </div>
       </div>
       <div class="tips">听到叫号请到迎宾台，过号不作废，过号一桌自动顺延3个号</div>
@@ -51,6 +51,14 @@
 <script>
   export default{
     name:'queue',
+    props:{
+      queueDetailData:{
+
+        default(){
+          return{}
+        }
+      }
+    },
     methods:{
       getCoupon(){
         if(this.couponGet==2)return;
@@ -61,12 +69,6 @@
       return{
         couponGet:2,//0：领取，1：立即使用，2:已领完，3：已使用,
         coupon:{
-          shopName:'麻吉寿司（天河店）',
-          numName:'A22',
-          time:'2017-04-05 16:28:30',
-          table:'小桌(1-2)',
-          num:20,
-          cost:2,
           waitTime:20
         }
       }

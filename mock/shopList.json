@@ -3,8 +3,8 @@
   {
     "id": 1,
     "name": "第1商铺",
-    "num": "36",
-    "shopStatus": "0",
+    "waittingNum": "36",
+    "shopStatus": 1,
     "location": "天河城天河城天天河城天河城天天河城天河城天天河城天河城天天河城天河城天河城天河城天河城天河城天河城天河城天河城天河城天河城天河城天河城",
     "distance": "1km",
     "shoplogo": "http://res.test.saofu.cn/saofu/upload/image/2016/10/28/fb63ee1d-0dc3-44bb-aa56-22d937dde1ea.jpg"
@@ -12,8 +12,8 @@
   {
     "id": 2,
     "name": "第2商铺",
-    "num": "36",
-    "shopStatus": "0",
+    "waittingNum": "36",
+    "shopStatus": 2,
     "location": "天河城天河城",
     "distance": "1km",
     "shoplogo": "http://res.test.saofu.cn/saofu/upload/image/2016/10/28/fb63ee1d-0dc3-44bb-aa56-22d937dde1ea.jpg"
@@ -21,8 +21,8 @@
   {
     "id": 3,
     "name": "第3商铺",
-    "num": "36",
-    "shopStatus": "0",
+    "waittingNum": "36",
+    "shopStatus": 3,
     "location": "天河城天河城天天河城天河城天天河城天河城天天河城天河城天天河城天河城天河城天河城天河城天河城天河城天河城天河城天河城天河城天河城天河城",
     "distance": "1km",
     "shoplogo": "http://res.test.saofu.cn/saofu/upload/image/2016/10/28/fb63ee1d-0dc3-44bb-aa56-22d937dde1ea.jpg"
@@ -30,8 +30,8 @@
   {
     "id": 4,
     "name": "第4商铺",
-    "num": "36",
-    "shopStatus": "0",
+    "waittingNum": "36",
+    "shopStatus": 4,
     "location": "天河城天河城",
     "distance": "1km",
     "shoplogo": "http://res.test.saofu.cn/saofu/upload/image/2016/10/28/fb63ee1d-0dc3-44bb-aa56-22d937dde1ea.jpg"
@@ -39,8 +39,8 @@
   {
     "id": 5,
     "name": "第5商铺",
-    "num": "36",
-    "shopStatus": "0",
+    "waittingNum": "36",
+    "shopStatus": 5,
     "location": "天河城天河城",
     "distance": "1km",
     "shoplogo": "http://res.test.saofu.cn/saofu/upload/image/2016/10/28/fb63ee1d-0dc3-44bb-aa56-22d937dde1ea.jpg"
@@ -48,8 +48,8 @@
   {
     "id": 6,
     "name": "第6商铺",
-    "num": "36",
-    "shopStatus": "0",
+    "waittingNum": "36",
+    "shopStatus": 1,
     "location": "天河城天河城",
     "distance": "1km",
     "shoplogo": "http://res.test.saofu.cn/saofu/upload/image/2016/10/28/fb63ee1d-0dc3-44bb-aa56-22d937dde1ea.jpg"

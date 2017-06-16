@@ -1,0 +1,13 @@
+{
+  "shopBranchId": "阿强酸菜鱼",
+  "peopleNum":3,
+  "tableName": "小桌",
+  "waittingTableNum": 11,
+  "tableFlag":"1",
+  "takeNumTime": "2017/06/13 24:12:00",
+  "serviceCharge": 100.00,
+  "takeNumRemind": "xxx",
+  "linesvrStatus": 0,
+  "couponId": "111111",
+  "waittingTime":"20分钟"
+}

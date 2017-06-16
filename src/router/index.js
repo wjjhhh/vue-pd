@@ -33,7 +33,6 @@ export default new Router({
           name:'city',
           component:City
         },
-
       ]
     },
     {

@@ -1,0 +1,31 @@
+{
+  "lineUpList":{
+    "shopBranchId":"4515",
+    "List":[{
+      "tableId":"125",
+      "tableName":"大桌",
+      "lowerNumber":1,
+      "limitNumber":4,
+      "waittingNum":25
+    },
+      {
+        "tableId":"126",
+        "tableName":"中桌",
+        "lowerNumber":5,
+        "limitNumber":9,
+        "waittingNum":25
+      },
+      {
+        "tableId":"127",
+        "tableName":"小桌",
+        "lowerNumber":10,
+        "limitNumber":15,
+        "waittingNum":25
+      }
+    ],
+    "isServiceCharge":true,
+    "serviceCharge":2.00,
+    "isShowInfo":true,
+    "discountInfo":"1、分微积分金额为\n2、分微积分金额为\n3、嗡嗡嗡"
+  }
+}

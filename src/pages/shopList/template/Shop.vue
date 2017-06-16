@@ -1,10 +1,17 @@
 <template>
   <section>
-    <div class="shop" @click="goShop(shop.id)">
-      <img class="shop-logo" v-bind:src="shop.shoplogo"/>
+    <div class="shop" @click="(shop.shopStatus==1||shop.shopStatus==4)&&goShop(shop.id)">
+      <img class="shop-logo" :src="shop.shoplogo"/>
       <div class="shop-info">
         <div class="shop-name">{{shop.name}}</div>
-        <div class="shop-num"><span class="shop-nums">{{shop.num}}桌</span><span class="shop-status">在等待</span></div>
+        <div class="shop-num">
+          <span class="shop-nums" v-if="shop.shopStatus==1||shop.shopStatus==4">{{shop.waittingNum}}桌</span>
+          <span class="shop-status" v-if="shop.shopStatus==1">在等待</span>
+          <span class="shop-status" v-if="shop.shopStatus==2">暂停取号</span>
+          <span class="shop-status" v-if="shop.shopStatus==3">暂不支持线上排队</span>
+          <span class="shop-status" v-if="shop.shopStatus==4">需等待</span>
+          <span class="shop-status" v-if="shop.shopStatus==5">无需取号</span>
+        </div>
       </div>
     </div>
     <div class="location">
@@ -16,6 +23,7 @@
 </template>
 
 <script>
+  import axios from 'axios';
   export default{
     data(){
       return{
@@ -23,6 +31,7 @@
       }
     },
     props:{
+        //shop.shopStatus  (备注:1=在等待,取好前,  2= 暂停取号,    3=暂不支持线上排队,4=取号后等待桌数 5=无需取号,不可点击 )
       shop:{
         type:Object,
         default(){
