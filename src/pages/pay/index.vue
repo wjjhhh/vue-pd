@@ -22,9 +22,16 @@
     methods:{
       pay(){
         console.log('确认支付')
-        this.$router.push({
-          name:'getNum'
-        })
+        if(Math.random()>.5){
+          this.$router.push({
+            name:'getNum'
+          })
+        }
+       else{
+          this.$router.push({
+            name:'getFail'
+          })
+        }
       }
     }
   }

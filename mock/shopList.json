@@ -1,58 +1,70 @@
 {
   "shopBranchList":[
   {
-    "id": 1,
+    "shopBranId":"111",
     "name": "第1商铺",
     "waittingNum": "36",
     "shopStatus": 1,
     "location": "天河城天河城天天河城天河城天天河城天河城天天河城天河城天天河城天河城天河城天河城天河城天河城天河城天河城天河城天河城天河城天河城天河城",
     "distance": "1km",
-    "shoplogo": "http://res.test.saofu.cn/saofu/upload/image/2016/10/28/fb63ee1d-0dc3-44bb-aa56-22d937dde1ea.jpg"
+    "shoplogo": "http://res.test.saofu.cn/saofu/upload/image/2016/10/28/fb63ee1d-0dc3-44bb-aa56-22d937dde1ea.jpg",
+    "longitude":"126.481488",
+    "latitude":"39.990464"
   },
   {
-    "id": 2,
+    "shopBranId": "112",
     "name": "第2商铺",
     "waittingNum": "36",
     "shopStatus": 2,
     "location": "天河城天河城",
     "distance": "1km",
-    "shoplogo": "http://res.test.saofu.cn/saofu/upload/image/2016/10/28/fb63ee1d-0dc3-44bb-aa56-22d937dde1ea.jpg"
+    "shoplogo": "http://res.test.saofu.cn/saofu/upload/image/2016/10/28/fb63ee1d-0dc3-44bb-aa56-22d937dde1ea.jpg",
+    "longitude":"126.481488",
+    "latitude":"39.990464"
   },
   {
-    "id": 3,
+    "shopBranId": "113",
     "name": "第3商铺",
     "waittingNum": "36",
     "shopStatus": 3,
     "location": "天河城天河城天天河城天河城天天河城天河城天天河城天河城天天河城天河城天河城天河城天河城天河城天河城天河城天河城天河城天河城天河城天河城",
     "distance": "1km",
-    "shoplogo": "http://res.test.saofu.cn/saofu/upload/image/2016/10/28/fb63ee1d-0dc3-44bb-aa56-22d937dde1ea.jpg"
+    "shoplogo": "http://res.test.saofu.cn/saofu/upload/image/2016/10/28/fb63ee1d-0dc3-44bb-aa56-22d937dde1ea.jpg",
+    "longitude":"126.481488",
+    "latitude":"39.990464"
   },
   {
-    "id": 4,
+    "shopBranId": "114",
     "name": "第4商铺",
     "waittingNum": "36",
     "shopStatus": 4,
     "location": "天河城天河城",
     "distance": "1km",
-    "shoplogo": "http://res.test.saofu.cn/saofu/upload/image/2016/10/28/fb63ee1d-0dc3-44bb-aa56-22d937dde1ea.jpg"
+    "shoplogo": "http://res.test.saofu.cn/saofu/upload/image/2016/10/28/fb63ee1d-0dc3-44bb-aa56-22d937dde1ea.jpg",
+    "longitude":"126.481488",
+    "latitude":"39.990464"
   },
   {
-    "id": 5,
+    "shopBranId": "115",
     "name": "第5商铺",
     "waittingNum": "36",
     "shopStatus": 5,
     "location": "天河城天河城",
     "distance": "1km",
-    "shoplogo": "http://res.test.saofu.cn/saofu/upload/image/2016/10/28/fb63ee1d-0dc3-44bb-aa56-22d937dde1ea.jpg"
+    "shoplogo": "http://res.test.saofu.cn/saofu/upload/image/2016/10/28/fb63ee1d-0dc3-44bb-aa56-22d937dde1ea.jpg",
+    "longitude":"126.481488",
+    "latitude":"39.990464"
   },
   {
-    "id": 6,
+    "shopBranId": "116",
     "name": "第6商铺",
     "waittingNum": "36",
     "shopStatus": 1,
     "location": "天河城天河城",
     "distance": "1km",
-    "shoplogo": "http://res.test.saofu.cn/saofu/upload/image/2016/10/28/fb63ee1d-0dc3-44bb-aa56-22d937dde1ea.jpg"
+    "shoplogo": "http://res.test.saofu.cn/saofu/upload/image/2016/10/28/fb63ee1d-0dc3-44bb-aa56-22d937dde1ea.jpg",
+    "longitude":"126.481488",
+    "latitude":"39.990464"
   }
 ]
 }

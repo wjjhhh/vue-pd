@@ -56,8 +56,8 @@
       fetchData(params){
 //        console.log(params)
         this.loading=true;
-//        var url='http://localhost:8080/mock/shopList.json';
-        var url='/wxQueue/getShopList';
+        var url='http://localhost:8080/mock/shopList.json';
+//        var url='/wxQueue/getShopList';
         var _tempArr=[];
         axios.get(url,{
           params:{
@@ -119,11 +119,10 @@
       },
       myNum(){
         console.log('进入我的排单号')
-        console.log(this.$router)
         this.$router.push({
           'name':'queue',
           params:{
-              userId:1
+
           }
         })
       },

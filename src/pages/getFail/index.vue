@@ -11,7 +11,9 @@
     methods:{
       back(){
         console.log('返回')
-        window.history.back();
+        this.$router.push({
+          name:'shopDetail'
+        })
       }
     }
   }

@@ -60,7 +60,9 @@
       //高度调整
       listContainerHeight(){
             console.log('高度是:',window.innerHeight)
-            this.containerHeight=window.innerHeight-this.$refs.search.$el.offsetHeight+'px';
+            this.$nextTick(function(){
+              this.containerHeight=window.innerHeight-this.$refs.search.$el.offsetHeight+'px';
+            })
       },
       //微信api定位
       getLocation(){
@@ -82,9 +84,7 @@
       } else { console.error("请在微信客户端中打开");}
     },
     mounted(){
-      this.$nextTick(function(){
         this.listContainerHeight();
-      })
       window.addEventListener("resize", this.listContainerHeight);
 //      this.isLoading=false
       setTimeout(()=>{

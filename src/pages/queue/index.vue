@@ -1,5 +1,6 @@
 <template>
   <div class="queuesContainer">
+    <Empty v-if="queueList.length==0"></Empty>
     <Queue :queue="queue" v-for='queue in queueList1' :key="queue.id"></Queue>
     <div class="old">
       <div v-if="queueList0.length" class="oldTitle">
@@ -14,11 +15,13 @@
 <script>
   import Queue from './template/queue.vue';
   import Loading from '../../components/Loading.vue'
+  import Empty from '../../components/Empty.vue'
   import axios from 'axios';
   export default{
     components:{
       Queue,
-      Loading
+      Loading,
+      Empty
     },
     created(){
       setTimeout(()=>{
@@ -40,8 +43,8 @@
       },
       fetchData(){
         var _this=this;
-//        var url='http://localhost:8080/mock/queue.json';
-        var url='/wxQueue/getQueueList';
+        var url='http://localhost:8080/mock/queue.json';
+//        var url='/wxQueue/getQueueList';
         axios.get(url).then(function(response){
           _this.queueList=response.data.consumerOrderList;
           _this.dealQueueList()
@@ -55,7 +58,7 @@
       },
     },
     watch:{
-      '$route':'test'
+      '$route':['test','fetchData']
     },
     data(){
       return{

@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="shop" @click="(shop.shopStatus==1||shop.shopStatus==4)&&goShop(shop.id)">
+    <div class="shop" @click="(shop.shopStatus==1||shop.shopStatus==4)&&goShop(shop.shopBranId)">
       <img class="shop-logo" :src="shop.shoplogo"/>
       <div class="shop-info">
         <div class="shop-name">{{shop.name}}</div>
@@ -14,7 +14,7 @@
         </div>
       </div>
     </div>
-    <div class="location">
+    <div class="location" @click="mapGuide(shop)">
       <span class="icon-location"></span>
       <div class="shop-location">{{shop.location}}</div>
       <div class="shop-distance">{{shop.distance}}</div>
@@ -49,6 +49,14 @@
           }
         })
       },
+      //进入高德导航
+      mapGuide(o){
+        var longitude=o.longitude,
+          latitude=o.latitude,
+          destName=o.location,
+          url='http://m.amap.com/navi/?dest='+longitude+','+latitude+'&destName='+destName+'&key=7b7eb0bb7ce95a52668cf22e55748b0a'
+          window.location.href=url;
+      }
     }
   }
 </script>
