@@ -32,6 +32,10 @@
     </div>
     <CheckPhoneDialog v-if="checkPhoneDialog" v-bind:min="min" v-bind:max="max" v-bind:numRange="numRange"></CheckPhoneDialog>
     <Loading v-show="loading"></Loading>
+    <transition name="fade">
+      <Toast v-show="toasting" v-bind:content="content"></Toast>
+    </transition>
+
   </div>
 </template>
 <script>
@@ -39,11 +43,15 @@
   import {bus} from '../../utils/bus.js'
   import priceFilter from '../../filters/price.js'
   import Loading from '../../components/Loading.vue'
+  import Toast from '../../components/toast.vue'
   import axios from 'axios';
+  import $cookies from '../../utils/cookies.js';
+
   export default{
     components:{
       'CheckPhoneDialog':checkPhoneDialog,
-      Loading
+      Loading,
+      Toast
     },
     mounted(){
     },
@@ -83,7 +91,12 @@
           var div=document.createElement('div');
           div.innerHTML=str1+str2
           this.$nextTick(()=>{
-              this.$refs.line.appendChild(div)
+             var _div=this.$refs.line;
+             //防止重新进入页面时dom继续插入，所以要删除旧的节点
+             while(_div.hasChildNodes()){
+                 _div.removeChild(_div.firstChild)
+             }
+            _div.appendChild(div)
           })
       },
       getNumFun(){
@@ -93,9 +106,17 @@
       },
       //请求数据
       fetchData(){
-        console.log('请求')
-        var url='http://localhost:8080/mock/getShopConfigTable.json';
-        axios.get(url).then((response)=>{
+        if(this.$route.name!='shopDetail'){
+            return
+        }
+//        var url='http://localhost:8081/mock/getShopConfigTable.json';
+        var url='/wxQueue/getShopConfigTable'
+        axios.get(url,{
+            params:{
+              shopBranchId:this.$route.params.shopBranId,
+              shopId:$cookies.getCookie('pd_shopId'),
+            }
+        }).then((response)=>{
             this.loading=false;
             this.lineUpList=response.data.lineUpList;
             this.tableSort();
@@ -113,6 +134,7 @@
       //取号，生成订单
       bus.$on('chooseEatNum',function(num){
          //计算人数在哪张桌，得出tableId
+        console.log(_this.lineUpList.List)
         var arr=_this.lineUpList.List,len=arr.length,tableId;
         while(len){
             if(num>=arr[len-1].lowerNumber&&num<=arr[len-1].limitNumber){
@@ -121,38 +143,49 @@
             }
             len--;
         }
-         var url='';
-          axios.get(url,{
-            params:{
+        var url='/wxQueue/queueTakeNumber';
+          axios.post(url,{
               shopBranchId:_this.lineUpList.shopBranchId,
               peopleNum:num,
               serviceCharge:_this.lineUpList.isServiceCharge,
               tableId:tableId,
               userPhone:'',
-              openid:''
-            }
+              openid:$cookies.getCookie('pd_openId')
           }).then((response)=>{
             if(response.data.success){
                 console.log('创建成功')
                 console.log('相关信息:'+response.data.respMsg)
+              //需给服务费
+                if(_this.lineUpList.isServiceCharge){
+                  _this.$router.push({
+                    name:'pay'
+                  })
+                }
+                //不需给服务费，直接取号
+                else{
+                  _this.$router.push({
+                    name:'getNum'
+                  })
+                }
+            }
+            else{
+                //失败，弹出toast窗提示
+                console.log('创建失败')
+                _this.content='系统繁忙，请重试';
+                _this.toasting=true;
+                setTimeout(()=>{
+                  _this.toasting=false;
+                },1500)
             }
           }).catch((err)=>{
             console.warn(err);
           })
-        //需给服务费
-        if(_this.lineUpList.isServiceCharge){
-          _this.$router.push({
-            name:'pay'
-          })
-        }
-        //不需给服务费，直接取号
-        else{
-          _this.$router.push({
-            name:'getNum'
-          })
-        }
+
       })
       this.fetchData();
+    },
+    watch:{
+      '$route':['fetchData']
     },
     data(){
       return{
@@ -163,6 +196,8 @@
         max:0,//可选人数最多,
         lineUpList:{},
         loading:true,
+        toasting:false,
+        content:'系统繁忙，请重试'
       }
     }
   }
@@ -301,4 +336,5 @@
       margin-left: 1em;
     }
   }
+
 </style>

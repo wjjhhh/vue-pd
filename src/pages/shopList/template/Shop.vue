@@ -1,7 +1,7 @@
 <template>
   <section>
-    <div class="shop" @click="(shop.shopStatus==1||shop.shopStatus==4)&&goShop(shop.shopBranId)">
-      <img class="shop-logo" :src="shop.shoplogo"/>
+    <div class="shop" @click="(shop.shopStatus==1||shop.shopStatus==4)&&goShop(shop.id)">
+      <img class="shop-logo" v-lazy="shop.shoplogo"/>
       <div class="shop-info">
         <div class="shop-name">{{shop.name}}</div>
         <div class="shop-num">
@@ -45,7 +45,7 @@
         this.$router.push({
           name:'shopDetail',
           params:{
-            shopId:id
+            shopBranId:id
           }
         })
       },

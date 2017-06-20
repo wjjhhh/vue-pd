@@ -21,22 +21,22 @@ export default new Router({
     {
       path: '/',
       component: Index,
-      redirect:'shopList',
+      // redirect:'shopList',
       children:[
         {
-          path:':openId',
+          path:'',
           name:'shopList',
           component:shopList,
         },
         {
-          path:'city/:shopList',
+          path:'city',
           name:'city',
           component:City
         },
       ]
     },
     {
-      path:'/shopDetail/:shopId/:openId',
+      path:'/shopDetail/:shopBranId/',
       name:'shopDetail',
       component:ShopDetail
     },
@@ -46,12 +46,12 @@ export default new Router({
       component:GetNum
     },
     {
-      path:'/queue/:openId',
+      path:'/queue',
       name:'queue',
       component:Queue,
     },
     {
-      path:'/queueDetail/:oddNumber/:status',
+      path:'/queueDetail/:orderId/',
       name:'queueDetail',
       component:QueueDetail
     },

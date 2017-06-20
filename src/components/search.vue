@@ -5,10 +5,12 @@
         <span class="logo-location"></span>
         <span class="city">定位中<span class="dotting"></span></span>
       </span>
-      <span v-show="!positioning">
+      <span v-show="!positioning" class="citing">
         {{position}}
       </span>
+
     </div>
+    <span class="drop-down"></span>
     <div class="fdjContainer" v-if="isShow">
       <div class="fdj0" @click="fdj=!fdj" v-show="!fdj"></div>
       <form class="fdjs"  v-show="fdj" @submit="submit">
@@ -68,19 +70,23 @@
     background-color:$bgColor;
     .pos{
       @include font-dpr(14px);
+      @include ellipsis(22%,'max-width');
+      vertical-align: middle;
       display:inline-block;
       color:#181818;
-      &:after{
-         @include bg-image("../assets/img/drop-down")
-          $size:p2r(34px);
-          content:'';
-          width:$size;
-          height:$size;
-          position: relative;
-          display: inline-block;
-          margin-left: p2r(5px);
-          vertical-align: middle;
-       }
+      .citing{
+
+      }
+    }
+    .drop-down{
+      @include bg-image("../assets/img/drop-down")
+      $size:p2r(34px);
+      width:$size;
+      height:$size;
+      position: relative;
+      display: inline-block;
+      margin-left: p2r(5px);
+      vertical-align: middle;
     }
     .logo-location{
       $size:p2r(34px);
@@ -94,6 +100,7 @@
       vertical-align: middle;
     }
     .fdjContainer{
+      max-width: 72%;
       height: 100%;
     }
     .fdjContainer,.fdj0,.fdjs{

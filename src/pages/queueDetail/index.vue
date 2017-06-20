@@ -28,8 +28,13 @@
     },
     methods:{
       fetchData(){
-          var url='http://localhost:8080/mock/queueDetail.json'
-          axios.get(url,{}).then((response)=>{
+//          var url='http://localhost:8081/mock/queueDetail.json'
+          var url='/wxQueue/getOrderDetail'
+          axios.get(url,{
+              params:{
+                orderId:this.$route.params.orderId
+              }
+          }).then((response)=>{
               this.queueDetailData=response.data;
               this.loading=false;
           }).catch((error)=>{
@@ -42,6 +47,9 @@
     },
     mounted(){
 //      console.log(this.$route.params.status)
+    },
+    watch:{
+      '$route':'fetchData'
     },
     data(){
       return{

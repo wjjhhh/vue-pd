@@ -23,7 +23,7 @@ module.exports = {
   },
   dev: {
     env: require('./dev.env'),
-    port: 8080,
+    port: 8081,
     autoOpenBrowser: true,
     openPath: "/#/10549840601068216320", //对应的商户
     assetsSubDirectory: 'static',
@@ -31,7 +31,7 @@ module.exports = {
     proxyTable: {
       '/wxQueue/': {
         // target: 'http://m.zb25.com.cn',
-        target: 'http://localhost:8081',
+        target: 'http://localhost:8080',
         changeOrigin: true,
         onProxyReq: function (proxyReq, req, res) {
           // proxyReq.setHeader('Cookie', '10888888888888888888=oFS7FjqIuhJSI0jk2ZSh_fYmqOaA'); //

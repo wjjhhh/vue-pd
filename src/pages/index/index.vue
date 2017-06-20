@@ -74,6 +74,7 @@
         wx.getLocation({
           type: 'gcj02',// 火星坐标
           success: (res) => {
+              console.log(100)
 //            this.$store.dispatch("setUserPoint", res);
 //            this.getAttr(res.latitude, res.longitude);
           },

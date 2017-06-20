@@ -17,6 +17,7 @@
   import Loading from '../../components/Loading.vue'
   import Empty from '../../components/Empty.vue'
   import axios from 'axios';
+  import $cookies from '../../utils/cookies.js'
   export default{
     components:{
       Queue,
@@ -24,13 +25,9 @@
       Empty
     },
     created(){
-      setTimeout(()=>{
         this.isLoading=false;
-        console.log('请求券')
-      this.fetchData();
-    },300)
+        this.fetchData();
     },
-
     methods:{
        //排队单分组
       dealQueueList(){
@@ -42,29 +39,33 @@
         })
       },
       fetchData(){
-        var _this=this;
-        var url='http://localhost:8080/mock/queue.json';
-//        var url='/wxQueue/getQueueList';
-        axios.get(url).then(function(response){
-          _this.queueList=response.data.consumerOrderList;
-          _this.dealQueueList()
+        if(this.$route.name!='queue')return;
+//        var url='http://localhost:8081/mock/queue.json';
+        var url='/wxQueue/getConsumerOrderList';
+        axios.get(url,{
+            params:{
+                openId:$cookies.getCookie('pd_openId')
+            }
+        }).then((response)=>{
+          if(typeof response.data){
+              if(JSON.stringify(response.data)=='{}'){
+                return;
+              }
+          }
+          this.queueList=response.data.consumerOrderList;
+          this.dealQueueList()
+        }).catch((error)=>{
+            console.warn(error)
         })
       },
-      test(){
-        if(this.$route.name=='queueDetail'){
-          console.log('text')
-        }
-
-      },
     },
+    //强制刷新请求
     watch:{
-      '$route':['test','fetchData']
+      '$route':['fetchData']
     },
     data(){
       return{
-        queueList:[
-
-        ],
+        queueList:[],
         queueList0:[],
         queueList1:[],
         isLoading:true,

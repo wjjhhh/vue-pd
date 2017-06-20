@@ -6,7 +6,7 @@
         <div v-if="hasQueue">
           <Shop :shop="shop" v-for="shop in shopBranchList" :key="shop.id"></Shop>
           <div class="loading" v-if="loading">页面加载中...</div>
-          <div class="loading" v-if="!loading&&!hasNext">没有更多门店了</div>
+          <div class="loading" v-if="!loading&&!hasNext||specialNo">没有更多门店了</div>
         </div>
         <div v-else>
           <div class="icon-noQueue"></div>
@@ -31,6 +31,7 @@
   import axios from 'axios';
   import location from '../../utils/location.js'
   import $util from '../../utils/index.js'
+  import $cookies from '../../utils/cookies.js'
   export default{
     components:{
       Shop
@@ -45,6 +46,7 @@
         hasNext:false,
         shopBranchList: [],
         busy:false,
+        specialNo:false,//商户列表过少时出现没有更多门店
       }
     },
     methods:{
@@ -56,23 +58,23 @@
       fetchData(params){
 //        console.log(params)
         this.loading=true;
-        var url='http://localhost:8080/mock/shopList.json';
-//        var url='/wxQueue/getShopList';
+//        var url='http://localhost:8081/mock/shopList.json';
+        var url='/wxQueue/getShopList';
         var _tempArr=[];
         axios.get(url,{
           params:{
-            shopId:123,
+            shopId:$cookies.getCookie('pd_shopId'),
             page:this.page,
             pageSize:this.pageSize
           }
         })
         .then((response)=>{
-          setTimeout(()=>{
             _tempArr=response.data.shopBranchList;
             if(_tempArr.length==0){
               this.hasQueue=false;
             }
             this.loading=false;
+            this.specialNo=true;
             if (params.page != 1 && this.page + 1 != params.page) {
               console.error("页数已经发生变化");
               return -1;
@@ -91,7 +93,6 @@
                 this.hasNext = true;
             }
 //            this.busy=false;
-          },1000)
         })
         .catch((err)=>{
           console.warn(err);
@@ -101,6 +102,7 @@
       onLoadMore(){
           if(this.loading||!this.hasNext)return -1;
           console.log('加载更多')
+          this.specialNo=false;
           let params={
             page:this.page+1,
             pageSize:this.pageSize

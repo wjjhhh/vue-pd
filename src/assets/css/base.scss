@@ -17,11 +17,21 @@
   }
 }
 
-@mixin ellipsis($width){
+@mixin ellipsis($width,$isMaxWidth:false){
   @if unit($width) == "px" {
-    width: p2r($width);
+    @if($isMaxWidth){
+      max-width:p2r($width)
+    }
+    @else{
+      width: p2r($width);
+    }
   } @else {
-    width: $width;
+      @if($isMaxWidth){
+        max-width:$width;
+      }
+      @else{
+        width: $width;
+      }
   }
   overflow: hidden;
   text-overflow: ellipsis;

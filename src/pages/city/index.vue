@@ -27,7 +27,7 @@
       return{
         isLoading:true,//loading状态
         citys:[],
-        letter:[],
+        letter:[],//侧边索引栏
 //        letter:["A","B","C","D","E","F","G","H","I","J","k","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
       }
     },
@@ -44,15 +44,15 @@
     methods:{
       fetchData(){
         this.isLoading=false;
-//        let url='http://localhost:8080/mock/city.json';
+//        let url='http://localhost:8081/mock/city.json';
         let url='/wxQueue/getCityList';
-        var _this=this;
+        var _this=this,_city=[];
         axios.get(url).then(function(response){
-          _this.city=response.data;
-          _this.dealCity(_this.city,'pinyin')
+          _city=response.data.cityList;
+          _this.dealCity(_city,'firstLetter');
         })
       },
-      //数组，分类字段（如pinyin拼音）
+//数组，分类字段（如firstLetter首字母）
       dealCity(arr,index){
         var map={},dest=[],_letter=[];
         for(var i= 0,len=arr.length;i<len;++i){
@@ -82,11 +82,9 @@
           return a['index'].charCodeAt()- b['index'].charCodeAt()
         })
         this.citys=_dest;
-
         this.letter=_dest.map(function(item){
           return item.index;
         })
-//        console.log(_letter);
       },
       //点击相应城市
       chooseCity(name){

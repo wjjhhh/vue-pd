@@ -9,17 +9,40 @@
 
 <script>
   import axios from 'axios';
+  import $cookies from './utils/cookies.js';
 export default {
   name: 'app',
   methods:{
     initWX(){
-      console.log('微信初始化')
+      console.log('微信初始化');
       var router = this.$router.resolve(window.location.hash.replace("#", ""));
-      axios.get('/kq/kqdetail/jsapi/config/'+router.route.params.shopList).then((ret)=>{
-        if(ret.success){
-
-        }
+//      var url='/wxQueue/enterQueue';
+      var url='http://localhost:8081/mock/enterQueue.json'
+      axios.get(url).then((response)=>{
+        //存储openId
+        $cookies.setCookie('pd_openId',response.data.openId);
+        //存储商户id
+        $cookies.setCookie('pd_shopId',response.data.shopId);
+      }).catch((error)=>{
+          console.warn(error);
       })
+//      axios.get('/kq/kqdetail/jsapi/config/'+router.route.params.openId).then((ret)=>{
+//        if(ret.success){
+
+            wx.config({
+              appId:'wx527f04fa2acc88fc',
+              timestamp:1497839411,
+              nonceStr:'GRVMCQMBJDHY',
+              signature:'1fa56b7ac301810a201bf487920f82811aeefd71',
+              jaApiList:['checkJsApi','getLocation', 'openLocation',],
+              fail:function(){
+                  console.error('wx config error');
+              }
+            })
+//        }
+//      }).catch((error)=>{
+//          console.warn(error);
+//      })
 //      console.log('/kq/kqdetail/jsapi/config/' + router.route.params.shopSerial)
 //      axios.get('/kq/kqdetail/jsapi/config/' + router.route.params.shopSerial , {}).then((ret) => {
 //        console.log('/kq/kqdetail/jsapi/config/' + router.route.params.shopSerial)
@@ -43,10 +66,23 @@ export default {
   },
   created(){
     this.initWX();
-    wx.error((res)=>{
-        console.error('微信jsdk配置失败: '+res);
+    wx.ready(function () {
+        console.log('调用成功')
+        wx.getLocation({
+          type:'wgs84',
+          success:function(res){
+              console.log(res)
+          },
+          cancel:function(){
+              console.log()
+          }
+        })
     })
+//    wx.error((res)=>{
+//        console.error('微信jsdk配置失败: '+res);
+//    })
   },
+
   beforeRouteLeave(to,from,next){
     console.log(to);
     console.log(from);

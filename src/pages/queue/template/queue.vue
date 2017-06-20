@@ -1,5 +1,5 @@
 <template>
-  <div :class="queue.orderStatus==0?'queue1':'queue0'" class='queue' @click="gotoShop(queue.shopBranchId,queue.orderStatus)">
+  <div :class="queue.orderStatus==0?'queue1':'queue0'" class='queue' @click="gotoShop(queue.id)">
     <div class="shopName">{{queue.branchName}}</div>
     <div class="table">
       <div class="tableType">
@@ -30,8 +30,7 @@
         this.$router.push({
           name:'queueDetail',
           params:{
-            oddNumber:id,
-            status:status
+            orderId:id,
           }
         })
       }
