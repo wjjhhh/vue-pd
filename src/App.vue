@@ -20,9 +20,11 @@ export default {
       var url='http://localhost:8081/mock/enterQueue.json'
       axios.get(url).then((response)=>{
         //存储openId
-        $cookies.setCookie('pd_openId',response.data.openId);
+//        $cookies.setCookie('pd_openId',response.data.openId);
+        this.$store.dispatch('setOpenId',response.data.openId);
         //存储商户id
-        $cookies.setCookie('pd_shopId',response.data.shopId);
+//        $cookies.setCookie('pd_shopId',response.data.shopId);
+        this.$store.dispatch('setShopId',response.data.shopId);
       }).catch((error)=>{
           console.warn(error);
       })

@@ -10,7 +10,7 @@
     <div class="citys">
       <ul v-for="item in citys">
         <li class="city-index">{{item.index}}</li>
-        <li v-for="i in item.data" class="city-list" @click="chooseCity(i.name)">{{i.name}}</li>
+        <li v-for="i in item.data" class="city-list" @click="chooseCity(i.name,i.city_id)">{{i.name}}</li>
       </ul>
     </div>
     <Loading v-show="isLoading"></Loading>
@@ -19,6 +19,7 @@
 <script>
   import axios from 'axios';
   import Loading from '../../components/Loading';
+  import {bus} from '../../utils/bus.js'
   export default{
     components:{
       Loading,
@@ -87,8 +88,26 @@
         })
       },
       //点击相应城市
-      chooseCity(name){
-        console.log(name)
+      chooseCity(name,city_id){
+        this.$store.dispatch('setCity',city_id);
+        var url='/wxQueue/getShopListByName';
+        axios.get(url,{
+          params:{
+            shopId:this.$store.getters.getShopId,
+            cityId:city_id
+          }
+        }).then((response)=>{
+          if( response.data.code==1){
+            this.$store.dispatch('setAttch',response.data.attch)
+            bus.$emit('requestShopList',response.data.attch)
+          }
+          else{
+            this.$store.dispatch('setAttch',[])
+            bus.$emit('requestShopList',[])
+          }
+        }).catch((error)=>{
+          console.warn(error)
+        })
         this.$router.push({
           name:'shopList',
           params:{

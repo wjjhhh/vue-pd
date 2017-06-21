@@ -32,6 +32,7 @@
   import location from '../../utils/location.js'
   import $util from '../../utils/index.js'
   import $cookies from '../../utils/cookies.js'
+  import {bus} from '../../utils/bus.js'
   export default{
     components:{
       Shop
@@ -41,13 +42,16 @@
         hasQueue:true,//false为没有队可排
         shopListHeight:'1200px',
         loading:true,
-        page:0,
+        page:1,
         pageSize:10,
         hasNext:false,
         shopBranchList: [],
         busy:false,
         specialNo:false,//商户列表过少时出现没有更多门店
       }
+    },
+    watch:{
+      '$route':['fetchData']
     },
     methods:{
       //定位
@@ -63,9 +67,13 @@
         var _tempArr=[];
         axios.get(url,{
           params:{
-            shopId:$cookies.getCookie('pd_shopId'),
+            shopId:this.$store.getters.getShopId,
             page:this.page,
-            pageSize:this.pageSize
+            pageSize:this.pageSize,
+            userLon:"126.481488",
+            userLat:"39.990464",
+            openId:this.$store.getters.getOpenId,
+            shopBranchIdList:this.$store.getters.getAttch
           }
         })
         .then((response)=>{
@@ -137,9 +145,12 @@
     },
     created(){
       this.refreshData();
-      //检测是否微信浏览器
-      if($util.isWeixinBrowser()){
-      }
+      //搜索框组件调用请求商户列表
+      var _this=this;
+      bus.$on('requestShopList',function(attch){
+        _this.shopBranchList=[]
+        _this.refreshData()
+      })
     },
     mounted(){
 //      this.$nextTick(function () {

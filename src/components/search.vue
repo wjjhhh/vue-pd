@@ -24,6 +24,8 @@
 </template>
 
 <script>
+  import axios from 'axios'
+  import {bus} from '../utils/bus.js'
   export default{
     data(){
      return{
@@ -44,6 +46,7 @@
     methods:{
       search(){
         this.fdj=!this.fdj
+        this.$store.dispatch('setAttch',[]);
       },
       //选择城市，进入城市列表
       goCity(){
@@ -53,8 +56,27 @@
       },
       submit(e){
         e.preventDefault();
-        if(this.input.length<=0)return
-        console.log('提交:'+this.input)
+        var value=this.input.trim();
+        if(value.length<=0)return
+//        console.log('提交:'+value)
+        var url='/wxQueue/getShopListByName';
+        axios.get(url,{
+            params:{
+                shopId:this.$store.getters.getShopId,
+                branchName:value
+            }
+        }).then((response)=>{
+            if( response.data.code==1){
+              this.$store.dispatch('setAttch',response.data.attch)
+              bus.$emit('requestShopList',response.data.attch)
+            }
+            else{
+              this.$store.dispatch('setAttch',[])
+              bus.$emit('requestShopList',[])
+            }
+        }).catch((error)=>{
+            console.warn(error)
+        })
       },
 
     },
@@ -79,7 +101,7 @@
       }
     }
     .drop-down{
-      @include bg-image("../assets/img/drop-down")
+      @include bg-image("../assets/img/drop-down");
       $size:p2r(34px);
       width:$size;
       height:$size;
@@ -136,7 +158,7 @@
         margin-left: p2r(18px);
       }
       .fdj1{
-        @include fdj()
+        @include fdj();
         position: absolute!important;
         left:p2r(15px);
       }
