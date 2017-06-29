@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <!--<img src="./assets/logo.png">-->
-    <keep-alive>
+    <keep-alive v-if="afterInit">
       <router-view></router-view>
     </keep-alive>
   </div>
@@ -10,10 +10,17 @@
 <script>
   import axios from 'axios';
   import $cookies from './utils/cookies.js';
+  import {bus} from './utils/bus.js'
 export default {
   name: 'app',
+  data(){
+      return{
+        afterInit:false
+      }
+  },
   methods:{
     initWX(){
+      document.title = "门店列表"
       console.log('微信初始化');
       var router = this.$router.resolve(window.location.hash.replace("#", ""));
 //      var url='/wxQueue/enterQueue';
@@ -25,9 +32,11 @@ export default {
         //存储商户id
 //        $cookies.setCookie('pd_shopId',response.data.shopId);
         this.$store.dispatch('setShopId',response.data.shopId);
+        this.afterInit=true;
       }).catch((error)=>{
           console.warn(error);
       })
+
 //      axios.get('/kq/kqdetail/jsapi/config/'+router.route.params.openId).then((ret)=>{
 //        if(ret.success){
 
@@ -94,6 +103,11 @@ export default {
 </script>
 
 <style type="text/scss" lang="scss">
+  /*@font-face*/
+  /*{*/
+    /*font-family: pingfang;*/
+    /*src: url('../src/assets/font/PingFang.ttf');*/
+  /*}*/
 html{
   background-color:#f5f5f5;
 }
@@ -108,7 +122,7 @@ li{
   list-style: none;
 }
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family:"Microsoft YaHei", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #f5f5f5;

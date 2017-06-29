@@ -42,9 +42,10 @@
         if(this.$route.name!='queue')return;
 //        var url='http://localhost:8081/mock/queue.json';
         var url='/wxQueue/getConsumerOrderList';
+        this.isLoading=true;
         axios.get(url,{
             params:{
-                openId:$cookies.getCookie('pd_openId')
+                openId:this.$store.getters.getOpenId
             }
         }).then((response)=>{
           if(typeof response.data){
@@ -52,6 +53,7 @@
                 return;
               }
           }
+          this.isLoading=false;
           this.queueList=response.data.consumerOrderList;
           this.dealQueueList()
         }).catch((error)=>{
@@ -102,7 +104,8 @@
        /*}*/
     }
     .content{
-
+      color:#adadad;
+      @include font-dpr(14px);
     }
     .dotted{
       height: 50%;

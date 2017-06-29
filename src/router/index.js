@@ -41,7 +41,7 @@ export default new Router({
       component:ShopDetail
     },
     {
-      path:'/shopDetail/:shopId/getNum',
+      path:'/shopDetail/:shopBranId/getNum',
       name:'getNum',
       component:GetNum
     },
@@ -51,17 +51,17 @@ export default new Router({
       component:Queue,
     },
     {
-      path:'/queueDetail/:orderId/',
+      path:'/queueDetail/:orderId/:linesvrId',
       name:'queueDetail',
       component:QueueDetail
     },
     {
-      path:'/shopDetail/:shopId/getFail/:openId',
+      path:'/shopDetail/:shopBranId/getFail',
       name:'getFail',
       component:GetFail
     },
     {
-      path:'/shopDetail/:shopId/pay/:openId',
+      path:'/pay',
       name:'pay',
       component:Pay
     },

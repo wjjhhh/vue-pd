@@ -1,16 +1,24 @@
 <template>
   <section>
-    <div class="shop" @click="(shop.shopStatus==1||shop.shopStatus==4)&&goShop(shop.id)">
+    <div class="shop" @click="(shop.shopStatus==1||shop.shopStatus==4)&&goShop(shop.shopBranchId,shop.name,shop.linesvrId)">
       <img class="shop-logo" v-lazy="shop.shoplogo"/>
       <div class="shop-info">
         <div class="shop-name">{{shop.name}}</div>
         <div class="shop-num">
-          <span class="shop-nums" v-if="shop.shopStatus==1||shop.shopStatus==4">{{shop.waittingNum}}桌</span>
-          <span class="shop-status" v-if="shop.shopStatus==1">在等待</span>
-          <span class="shop-status" v-if="shop.shopStatus==2">暂停取号</span>
-          <span class="shop-status" v-if="shop.shopStatus==3">暂不支持线上排队</span>
-          <span class="shop-status" v-if="shop.shopStatus==4">需等待</span>
-          <span class="shop-status" v-if="shop.shopStatus==5">无需取号</span>
+          <span class="shop-status-name" :class="shop.shopStatus==2?'shop-status-name2':'shop-status-name1'">
+            <span v-if="shop.shopStatus==2">暂停取号</span>
+            <span v-if="shop.shopStatus==5">无需排队</span>
+            <span v-if="shop.shopStatus!=2&&shop.shopStatus!=5">排队</span>
+          </span>
+          <div class="shop-num-status">
+            <span class="shop-nums" v-if="shop.shopStatus==1||shop.shopStatus==4">{{shop.waittingNum}}桌</span>
+            <span class="shop-status" v-if="shop.shopStatus==1">在等待</span>
+            <span class="shop-status" v-if="shop.shopStatus==2">未到可取号时间</span>
+            <span class="shop-status" v-if="shop.shopStatus==3">需到店取号</span>
+            <span class="shop-status" v-if="shop.shopStatus==4">需等待</span>
+            <span class="shop-status" v-if="shop.shopStatus==5">到店即可就餐</span>
+          </div>
+
         </div>
       </div>
     </div>
@@ -40,13 +48,15 @@
       }
     },
     methods:{
-      goShop(id){
-        console.log('进入商店');
+      goShop(shopBranchId,name,linesvrId){
+        console.log('进入商店',shopBranchId);
         this.$router.push({
           name:'shopDetail',
           params:{
-            shopBranId:id
-          }
+            shopBranId:shopBranchId,
+            shopName:name,
+            linesvrId:linesvrId
+          },
         })
       },
       //进入高德导航
@@ -76,13 +86,13 @@
 
   }
   .shop-logo{
-    $size:p2r(182px);
-    width:$size;
-    height:$size;
-    border-radius: p2r(4px);
+    width:p2r(180px);
+    height:p2r(180px);
+    border-radius: p2r(2px);
+    object-fit: cover;
   }
   .shop-info{
-    height:p2r(182px);
+    height:p2r(180px);
     margin-left: p2r(24px);
     flex:1;
     border-bottom: 1px #e1e1e1 solid;
@@ -90,22 +100,45 @@
     box-sizing: border-box;
   }
   .shop-name{
-    font-size: p2r(30px);
+    @include font-dpr(18px);
     color:#181818;
+    font-weight: bold;
+    line-height: p2r(42px);
   }
   .shop-num{
-    position: absolute;
-    bottom:p2r(24px);
-    right:0;
+    margin-top: p2r(84px);
+    line-height: p2r(30px);
+  }
+  .shop-status-name{
+    @include font-dpr(11px);
+    width:p2r(104px);
+    height: p2r(30px);
+    line-height: p2r(30px);
+    display: inline-block;
+    text-align: center;
+    border-radius: p2r(4px);
+    color:#fff;
+  }
+  .shop-status-name1{
+    background-color: #f74848;
+  }
+  .shop-status-name2{
+    background-color: #adadad;
+  }
+  .shop-num-status{
+    float:right;
   }
   .shop-nums{
-    font-size: p2r(36px);
+    @include font-dpr(19px);
     color:#f74848;
   }
+  .shop-status{
+    color:#f74848;
+    @include font-dpr(13px);
+  }
   .shop-nums+.shop-status{
-    font-size: p2r(24px);
     color:#181818;
-    margin-left: p2r(18px);
+    margin-left: p2r(2px);
   }
   .location{
     position: relative;
@@ -124,11 +157,11 @@
   .shop-location{
     width:p2r(506px);
     @include linesEllipsis(2);
-    font-size: p2r(24px);
+    @include font-dpr(13px);
     line-height: p2r(34px);
   }
   .shop-distance{
-    font-size: p2r(22px);
+    @include font-dpr(13px);
     position: absolute;
     bottom:0;
     right:0;

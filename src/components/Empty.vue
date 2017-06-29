@@ -18,7 +18,7 @@
     margin:p2r(220px) auto p2r(26px);
     &+div{
       text-align:center;
-      @include font-dpr(12px);
+      @include font-dpr(14px);
       color:#adadad;
     }
   }

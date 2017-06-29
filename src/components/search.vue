@@ -14,7 +14,7 @@
     <div class="fdjContainer" v-if="isShow">
       <div class="fdj0" @click="fdj=!fdj" v-show="!fdj"></div>
       <form class="fdjs"  v-show="fdj" @submit="submit">
-        <input placeholder="搜索" v-model="input"/>
+        <input placeholder="搜索" v-model="input" type="search"/>
         <span class="cancel-search" @click="search">取消</span>
         <span class="fdj1" @click="submit"></span>
       </form>
@@ -40,7 +40,7 @@
       positioning:'',//true:定位中,
       position:'',
     },
-    mounted(){
+    computed(){
 
     },
     methods:{
@@ -59,24 +59,8 @@
         var value=this.input.trim();
         if(value.length<=0)return
 //        console.log('提交:'+value)
-        var url='/wxQueue/getShopListByName';
-        axios.get(url,{
-            params:{
-                shopId:this.$store.getters.getShopId,
-                branchName:value
-            }
-        }).then((response)=>{
-            if( response.data.code==1){
-              this.$store.dispatch('setAttch',response.data.attch)
-              bus.$emit('requestShopList',response.data.attch)
-            }
-            else{
-              this.$store.dispatch('setAttch',[])
-              bus.$emit('requestShopList',[])
-            }
-        }).catch((error)=>{
-            console.warn(error)
-        })
+          bus.$emit('requestShopList')
+        this.$store.dispatch('setVagueShopBranchName',value)
       },
 
     },
@@ -91,8 +75,8 @@
     text-align: initial;
     background-color:$bgColor;
     .pos{
-      @include font-dpr(14px);
-      @include ellipsis(22%,'max-width');
+      @include font-dpr(15px);
+      @include ellipsis(20%,'max-width');
       vertical-align: middle;
       display:inline-block;
       color:#181818;
@@ -100,6 +84,7 @@
 
       }
     }
+
     .drop-down{
       @include bg-image("../assets/img/drop-down");
       $size:p2r(34px);
@@ -146,21 +131,34 @@
       input{
         display:inline-block;
         width: p2r(420px);
-        height:p2r(60px);
+        /*height:p2r(60px);*/
+        /*height:p2r(14px);*/
         box-sizing: border-box;
         border:1px solid #D0D0D0;
         border-radius: p2r(30px);
         outline:none;
-        padding: 0 p2r(31px) 0 p2r(62px);
-        font-size: p2r(26px);
+        /*padding: 0 p2r(31px) 0 p2r(62px);*/
+        padding:p2r(12px) p2r(31px) p2r(12px) p2r(62px);
+        @include font-dpr(14px);
+
+      }
+
+      @media (max-width: 720px) {
+        input{
+          width: p2r(410px);
+        }
       }
       .cancel-search{
         margin-left: p2r(18px);
+        @include font-dpr(14px);
       }
       .fdj1{
         @include fdj();
         position: absolute!important;
         left:p2r(15px);
+        margin: auto;
+        top: 0;
+        bottom: 0;
       }
     }
   }

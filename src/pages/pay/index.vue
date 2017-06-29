@@ -2,12 +2,12 @@
   <div>
     <header>取号成功后，服务费不予退还哦</header>
     <section>
-      <div class="shopName">麻吉寿司（天河城店）</div>
+      <div class="shopName">{{shopBranchName}}</div>
       <div class="detail">
-        <div>人数<span>2人</span></div>
-        <div>桌型<span>小桌</span></div>
+        <div>人数<span>{{peopleNum}}人</span></div>
+        <div>桌型<span>{{tableName}}</span></div>
       </div>
-      <div class="price">￥<span>2</span></div>
+      <div class="price">￥<span>{{serviceCharge}}</span></div>
     </section>
     <div class="btn-pay" @click="pay">确认支付</div>
   </div>
@@ -16,7 +16,10 @@
   export default{
     data(){
       return{
-
+          shopBranchName:this.$route.params.shopBranchName,
+          tableName:this.$route.params.tableName,
+          peopleNum:this.$route.params.peopleNum,
+          serviceCharge:this.$route.params.serviceCharge
       }
     },
     methods:{

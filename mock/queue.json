@@ -1,9 +1,9 @@
 {
   "consumerOrderList":[
-  {"shopBranchId":1,"branchName":"麻吉寿司（天河城店）","orderStatus":0,"tableName":"小桌","waittingTableNum":"20","orderTime":"2017/06/13 24:12:00","tableFlag": "xxx","id":100},
-  {"shopBranchId":2,"branchName":"饭店2","orderStatus":1,"tableName":"小桌","waittingTableNum":"20","orderTime":"2017/06/13 24:12:00","tableFlag": "xxx","id":101},
-  {"shopBranchId":3,"branchName":"饭店3","orderStatus":2,"tableName":"中桌","waittingTableNum":"20","orderTime":"2017/06/13 24:12:00","tableFlag": "xxx","id":102},
-  {"shopBranchId":4,"branchName":"饭店4","orderStatus":3,"tableName":"大桌","waittingTableNum":"10","orderTime":"2017/06/13 24:12:00","tableFlag": "xxx","id":103},
-  {"shopBranchId":5,"branchName":"饭店5","orderStatus":3,"tableName":"小桌","waittingTableNum":"1","orderTime":"2017/06/13 24:12:00","tableFlag": "xxx","id":104}
+  {"shopBranchId":1,"branchName":"麻吉寿司（天河城店）","orderStatus":0,"tableName":"小桌","waittingTableNum":"20","orderTime":"2017/06/13 24:12:00","tableFlag": "A22","id":100,"peopleNum":3},
+  {"shopBranchId":2,"branchName":"饭店2","orderStatus":1,"tableName":"小桌","waittingTableNum":"20","orderTime":"2017/06/13 24:12:00","tableFlag": "xxx","id":101,"peopleNum":3},
+  {"shopBranchId":3,"branchName":"饭店3","orderStatus":2,"tableName":"中桌","waittingTableNum":"20","orderTime":"2017/06/13 24:12:00","tableFlag": "xxx","id":102,"peopleNum":3},
+  {"shopBranchId":4,"branchName":"饭店4","orderStatus":3,"tableName":"大桌","waittingTableNum":"10","orderTime":"2017/06/13 24:12:00","tableFlag": "xxx","id":103,"peopleNum":3},
+  {"shopBranchId":5,"branchName":"饭店5","orderStatus":3,"tableName":"小桌","waittingTableNum":"1","orderTime":"2017/06/13 24:12:00","tableFlag": "xxx","id":104,"peopleNum":3}
 ]
 }

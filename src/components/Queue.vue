@@ -8,12 +8,16 @@
       <slot name="success"></slot>
       <div class="detail">
         <div class="line1">
-          <span class="shopName">{{queueDetailData.shopBranchId}}</span>
-          <span class="numName">{{queueDetailData.tableFlag}}</span>
+          <span class="shopName">{{queueDetailData.branchName}}</span>
+          <span class="numName">{{queueDetailData.tableFlag}}
+            <span class="status" v-if="queueDetailData.orderStatus==1">(已就餐)</span>
+            <span class="status" v-if="queueDetailData.orderStatus==2">(已过号)</span>
+            <span class="status" v-if="queueDetailData.orderStatus==3">(已取消)</span>
+          </span>
         </div>
         <div class="line2 line">
-          <span class="time">{{queueDetailData.takeNumTime}}</span>
-          <span class="table">{{queueDetailData.tableName}}</span>
+          <span class="time">{{queueDetailData.orderTime}}</span>
+          <span class="table"><span>{{queueDetailData.tableName}}</span><span>{{queueDetailData.peopleNum}}人</span></span>
         </div>
         <div class="line3 line">
           <span>还需等待</span>
@@ -25,23 +29,26 @@
         </div>
         <div class="line5 line">
           <span>已等待</span>
-          <span class="waitTime">{{queueDetailData.waittingTime}}</span>
+          <span class="waitTime">{{queueDetailData.waittingTime}}分钟</span>
         </div>
       </div>
       <div class="tips">听到叫号请到迎宾台，过号不作废，过号一桌自动顺延3个号</div>
     </div>
-    <div class="coupon" v-if="couponGet!=2">
+    <div class="coupon" v-if="coupon.couponStatus!=1">
       <div class="logo-coupon"></div>
       <div class="couponDetail">
         <div>
-          <div class="couponName">三文鱼优惠券</div>
-          <div class="couponNum">10.0元（满200可用）</div>
+          <div class="couponName">{{coupon.cardName}}</div>
+          <div class="couponNum">{{coupon.cashReduceCost}}元（满{{coupon.cashLeastCost}}可用）</div>
         </div>
-        <span class="btn-get" :class="couponGet==2&&'btn-get-1'" @click="getCoupon">
-          <span v-if="couponGet==0">领取</span>
-          <span v-else-if="couponGet==1">立即使用</span>
-          <span v-else-if="couponGet==2">已领完</span>
-          <span v-else-if="couponGet==3">已使用</span>
+        <span class="btn-get" :class="coupon.couponStatus==1&&'btn-get-1'" @click="getCoupon">
+          <!--<span v-if="couponGet==0">领取</span>-->
+          <!--<span v-else-if="couponGet==1">立即使用</span>-->
+          <!--<span v-else-if="couponGet==2">已领完</span>-->
+          <!--<span v-else-if="couponGet==3">已使用</span>-->
+          <span v-if="coupon.couponStatus==1">已领取</span>
+          <span v-else-if="coupon.couponStatus==0">领取</span>
+
         </span>
       </div>
     </div>
@@ -49,28 +56,49 @@
 </template>
 
 <script>
+  import {bus} from '../utils/bus.js';
+  import axios from 'axios';
   export default{
     name:'queue',
     props:{
       queueDetailData:{
-
-        default(){
-          return{}
-        }
+//        default(){
+//          return []
+//        }
+      },
+      coupon:{
+          default(){
+              return{}
+          }
       }
     },
+
     methods:{
       getCoupon(){
         if(this.couponGet==2)return;
-        console.log('进入券详情页')
+//        console.log('进入券详情页')
+        var url='/wxQueue/receiveCoupon'
+        axios.get(url,{
+            params:{
+              couponId:this.coupon.couponId,
+              openId:this.$store.getters.getOpenId
+            }
+        }).then((response)=>{
+            if(response.data){
+                console.log('领取成功')
+            }
+            else{
+              console.log('领取失败')
+            }
+        }).catch((error)=>{
+            console.warn(error)
+        })
       },
     },
     data(){
       return{
-        couponGet:2,//0：领取，1：立即使用，2:已领完，3：已使用,
-        coupon:{
-          waitTime:20
-        }
+//        couponGet:0,//0：领取，1：立即使用，2:已领完，3：已使用,
+
       }
     }
   }
@@ -96,7 +124,7 @@
     overflow: hidden;
   }
   .suc{
-  @include font-dpr(14px);
+  @include font-dpr(15px);
     color:#181818;
     text-align: center;
   }
@@ -121,7 +149,7 @@
     line-height:p2r(24px);
     margin-bottom:p2r(28px);
   span{
-  @include font-dpr(12px);
+  @include font-dpr(13px);
   &:first-child{
      color:#7d7d7d;
    }
@@ -134,18 +162,28 @@
     line-height: p2r(48px);
     padding-bottom:p2r(32px);
     border-bottom: 1px #e1e1e1 dotted;
-
+    .status{
+      width:initial;
+      @include font-dpr(11px);
+      color:#545454;
+    }
   }
   .shopName{
-  @include font-dpr(14px);
+  @include font-dpr(15px);
     color:#181818;
   }
   .numName{
-  @include font-dpr(21px);
+  @include font-dpr(22px);
     color:#f74848;
   }
   .line2{
     margin-top:p2r(32px);
+    .table{
+      span{
+        width:initial;
+        margin-left: p2r(4px);
+      }
+    }
   }
   .num{
     color:#f74848!important;
@@ -155,7 +193,7 @@
 
   }
   .tips{
-  @include font-dpr(11px);
+  @include font-dpr(12px);
     color:#181818;
     margin:p2r(32px) p2r(24px);
   }
@@ -176,8 +214,8 @@
     height: $h;
     line-height: $h;
     color:#fff;
-  @include font-dpr(13px)
-  text-align:center;
+    @include font-dpr(14px);
+    text-align:center;
     border-radius: p2r(8px);
     background-color: #f74848;
     position: absolute;
@@ -202,13 +240,13 @@
     position: relative;
   }
   .couponName{
-  @include font-dpr(14px);
+  @include font-dpr(15px);
     color:#181818;
     line-height: p2r(40px);
     margin-bottom: p2r(10px);
   }
   .couponNum{
-  @include font-dpr(11px)
+  @include font-dpr(12px);
   color:#7d7d7d;
     line-height: p2r(24px);
   }

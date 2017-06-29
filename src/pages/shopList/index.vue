@@ -37,6 +37,7 @@
     components:{
       Shop
     },
+
     data(){
       return{
         hasQueue:true,//false为没有队可排
@@ -48,43 +49,58 @@
         shopBranchList: [],
         busy:false,
         specialNo:false,//商户列表过少时出现没有更多门店
+        vagueShopBranchName:'',
       }
     },
     watch:{
-      '$route':['fetchData']
+//      '$route':['refreshData'],
     },
     methods:{
+
       //定位
       location(){
         location();
       },
       //请求数据
       fetchData(params){
-//        console.log(params)
         this.loading=true;
+        this.specialNo=false;
 //        var url='http://localhost:8081/mock/shopList.json';
         var url='/wxQueue/getShopList';
         var _tempArr=[];
+
         axios.get(url,{
           params:{
             shopId:this.$store.getters.getShopId,
-            page:this.page,
+            page:params.page,
             pageSize:this.pageSize,
             userLon:"126.481488",
             userLat:"39.990464",
             openId:this.$store.getters.getOpenId,
-            shopBranchIdList:this.$store.getters.getAttch
+//            shopBranchIdList:this.$store.getters.getShopBranchList,
+            cityId:this.$store.getters.getCity,
+            vagueShopBranchName:this.$store.getters.getVagueShopBranchName
           }
         })
         .then((response)=>{
-            _tempArr=response.data.shopBranchList;
+           this.loading=false;
+            if(response.data.success==false){
+                this.shopBranchList=[];
+                this.specialNo=true;
+                return;
+            }
+            _tempArr=response.data.shopBranchInfo.shopBranchList;
+          this.$store.dispatch('setCityList',response.data.shopBranchInfo.cityList);
             if(_tempArr.length==0){
               this.hasQueue=false;
             }
-            this.loading=false;
+
             this.specialNo=true;
             if (params.page != 1 && this.page + 1 != params.page) {
               console.error("页数已经发生变化");
+              console.log(params)
+              console.log('params.page:'+params.page)
+              console.log('this.page:'+this.page)
               return -1;
             }
             if (params.page == 1) {
@@ -105,6 +121,7 @@
         .catch((err)=>{
           console.warn(err);
         })
+
       },
       //加载
       onLoadMore(){
@@ -147,7 +164,7 @@
       this.refreshData();
       //搜索框组件调用请求商户列表
       var _this=this;
-      bus.$on('requestShopList',function(attch){
+      bus.$on('requestShopList',function(){
         _this.shopBranchList=[]
         _this.refreshData()
       })
@@ -170,7 +187,7 @@
   @import "../../assets/css/base";
   @import "../../assets/css/_theme.scss";
   .loading{
-    @include font-dpr(12px);
+    @include font-dpr(13px);
     line-height: p2r(24px );
     padding: p2r(36px);
     color:#adadad;
@@ -178,7 +195,7 @@
     background-color: #f5f5f5;
   }
   .btn-my-odder{
-    @include font-dpr(15px);
+    @include font-dpr(16px);
     $h:p2r(100px);
     width:100%;
     height: $h;
@@ -196,7 +213,7 @@
     width:100%;
   }
   .tips{
-    @include font-dpr(12px);
+    @include font-dpr(13px);
     color:#adadad;
     text-align: center;
     line-height: p2r(42px);
@@ -204,7 +221,7 @@
   }
   .btn-location{
     $h:p2r(60px);
-    @include font-dpr(12px);
+    @include font-dpr(13px);
     color:#545454;
     width:p2r(198px);
     height:$h;
@@ -219,7 +236,7 @@
     height: p2r(258px);
     margin:p2r(120px) auto p2r(26px);
     &+div{
-      @include font-dpr(12px);
+      @include font-dpr(13px);
       text-align: center;
       color:#adadad;
       }

@@ -2,7 +2,7 @@
   <div class="dialogContainer">
     <div class="dialog">
       <header>{{dTitle}}</header>
-      <div class="content"><p>{{content}}</p></div>
+      <div class="content">{{content}}</div>
       <slot name="btns"></slot>
     </div>
   </div>
@@ -47,7 +47,7 @@
     right:0;
     margin:auto;
     header{
-      @include font-dpr(15px);
+      @include font-dpr(16px);
       $h:p2r(96px);
       height: $h;
       line-height: p2r(30px);
@@ -57,11 +57,11 @@
       border-bottom: 1px solid #e1e1e1;
     }
     .content{
-       @include font-dpr(14px);
+       @include font-dpr(15px);
       color:#545454;
-      line-height: 1;
+
       /*margin: p2r(72px) auto 0;*/
-      padding: 0.45333rem 0.53333rem 0;
+      padding: p2r(46px) p2r(48px);
       box-sizing: border-box;
     }
     .btns{
@@ -76,7 +76,7 @@
       box-sizing: border-box;
       font-size:0;
       span{
-       @include font-dpr(14px);
+       @include font-dpr(15px);
         width:50%;
         display: inline-block;
         box-sizing: border-box;
@@ -85,7 +85,7 @@
          }
         &:only-child{
           width:100%;
-
+font-weight: bold;
          }
       }
     }

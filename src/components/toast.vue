@@ -22,6 +22,7 @@
   }
 </script>
 <style type="text/scss" lang="scss" scoped>
+  @import "../assets/css/base";
   .container{
     width:100%;
     height:100%;
@@ -32,6 +33,7 @@
     background-color: transparent;
   }
   .toast{
+    @include font-dpr(13px);
     padding:4em 3em;
     text-align: center;
     margin:auto;

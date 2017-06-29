@@ -48,7 +48,11 @@
 //        let url='http://localhost:8081/mock/city.json';
         let url='/wxQueue/getCityList';
         var _this=this,_city=[];
-        axios.get(url).then(function(response){
+        axios.get(url,{
+            params:{
+              cityIdList:this.$store.getters.getCityList
+            }
+        }).then(function(response){
           _city=response.data.cityList;
           _this.dealCity(_city,'firstLetter');
         })
@@ -90,24 +94,7 @@
       //点击相应城市
       chooseCity(name,city_id){
         this.$store.dispatch('setCity',city_id);
-        var url='/wxQueue/getShopListByName';
-        axios.get(url,{
-          params:{
-            shopId:this.$store.getters.getShopId,
-            cityId:city_id
-          }
-        }).then((response)=>{
-          if( response.data.code==1){
-            this.$store.dispatch('setAttch',response.data.attch)
-            bus.$emit('requestShopList',response.data.attch)
-          }
-          else{
-            this.$store.dispatch('setAttch',[])
-            bus.$emit('requestShopList',[])
-          }
-        }).catch((error)=>{
-          console.warn(error)
-        })
+        this.$store.dispatch('setVagueShopBranchName','')
         this.$router.push({
           name:'shopList',
           params:{
@@ -141,7 +128,7 @@
     top: 50%;
     transform: translateY(-50%);
     .catalog{
-      @include font-dpr(11px);
+      @include font-dpr(12px);
       color:#545454;
       line-height: p2r(30px);
       list-style: none;
@@ -149,8 +136,9 @@
     }
   }
   .citys{
+    background-color: #fff;
     li{
-      padding-left: p2r(24px);
+
     }
   }
   .city-index{
@@ -158,8 +146,9 @@
     height: $h;
     line-height: $h;
     background-color: #f4f4f4;
-    @include font-dpr(13px);
+    @include font-dpr(14px);
     color:#adadad;
+    padding-left: p2r(24px);
   }
   .city-list{
     $h:p2r(90px);
@@ -167,5 +156,7 @@
     line-height: $h;
     border-bottom:1px solid #d0d0d0;
     background-color: #fff;
+    margin-left: p2r(24px);
+    @include font-dpr(15px);
   }
 </style>
