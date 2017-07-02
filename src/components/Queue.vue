@@ -21,20 +21,30 @@
         </div>
         <div class="line3 line">
           <span>还需等待</span>
-          <span class="num">{{queueDetailData.waittingTableNum}}桌</span>
+          <span class="num" v-if="queueDetailData.orderStatus==2||queueDetailData.orderStatus==3" style="color:#454545">
+            --
+          </span>
+          <span class="num" v-else style="color:#f74848">
+            {{queueDetailData.waittingTableNum}}桌
+          </span>
         </div>
         <div class="line4 line">
           <span>支付金额</span>
-          <span>{{queueDetailData.serviceCharge}}元</span>
+          <span v-if="queueDetailData.serviceCharge>0">{{queueDetailData.serviceCharge|priceFilter}}元</span>
+          <span v-else>--</span>
         </div>
         <div class="line5 line">
           <span>已等待</span>
-          <span class="waitTime">{{queueDetailData.waittingTime}}分钟</span>
+          <span class="waitTime">
+            {{(queueDetailData.orderStatus==2||queueDetailData.orderStatus==3)?'--':queueDetailData.waittingTime}}分钟
+          </span>
         </div>
       </div>
       <div class="tips">听到叫号请到迎宾台，过号不作废，过号一桌自动顺延3个号</div>
     </div>
-    <div class="coupon" v-if="coupon.couponStatus!=1">
+    <!--已过号和已取消，不显示优惠券-->
+
+    <div class="coupon" v-if="queueDetailData.orderStatus!=2&&queueDetailData.orderStatus!=3">
       <div class="logo-coupon"></div>
       <div class="couponDetail">
         <div>
@@ -48,18 +58,33 @@
           <!--<span v-else-if="couponGet==3">已使用</span>-->
           <span v-if="coupon.couponStatus==1">已领取</span>
           <span v-else-if="coupon.couponStatus==0">领取</span>
-
         </span>
       </div>
     </div>
+    <Toast v-show="toasting" v-bind:content="content"></Toast>
+    <Loading v-show="loading"></Loading>
   </div>
+
 </template>
 
 <script>
   import {bus} from '../utils/bus.js';
   import axios from 'axios';
+  import Toast from '../components/toast.vue'
+  import Loading from '../components/Loading.vue'
+  import priceFilter from '../filters/price.js'
   export default{
     name:'queue',
+    components:{
+      Toast,
+      Loading
+    },
+    filters:{
+      priceFilter
+    },
+    mounted(){
+
+    },
     props:{
       queueDetailData:{
 //        default(){
@@ -75,30 +100,57 @@
 
     methods:{
       getCoupon(){
-        if(this.couponGet==2)return;
+        if(this.coupon.couponStatus==1)return;
 //        console.log('进入券详情页')
+        this.loading=true;
         var url='/wxQueue/receiveCoupon'
-        axios.get(url,{
-            params:{
-              couponId:this.coupon.couponId,
-              openId:this.$store.getters.getOpenId
-            }
+        console.log(this.coupon)
+        this.$http.post(url,{
+          couponId:this.coupon.couponId,
+          openId:this.$store.getters.getOpenId,
+          shopId:this.$store.getters.getShopId,
+          linesvrId:this.$route.params.linesvrId,
+          orderId:this.$route.params.orderId
         }).then((response)=>{
-            if(response.data){
-                console.log('领取成功')
-            }
-            else{
-              console.log('领取失败')
-            }
+//            if(this.coupon.listing==0){
+//                this.content='待上架'
+//            }
+//            else if(this.coupon.listing==2){
+//              this.content='已下架'
+//            }
+//            else if(this.coupon.listing==1){
+              //领取成功
+              if(response.data.code==1){
+                this.coupon.couponStatus=1
+                //2秒后跳转
+                window.setTimeout(function(){
+                  window.location.href=response.data.message;
+                },2000)
+              }
+              //领取失败
+              else{
+                this.content=response.data.message;
+              }
+
+//            }
+          this.loading=false;
+          this.toasting=true;
+          var _this=this;
+          window.setTimeout(()=>{_this.toasting=false},1500)
         }).catch((error)=>{
-            console.warn(error)
+          console.warn(error)
         })
+
       },
+
     },
     data(){
       return{
 //        couponGet:0,//0：领取，1：立即使用，2:已领完，3：已使用,
-
+        canShow:false,//避免优惠券闪现闪消失,
+        toasting:false,
+        content:'',//toast文案
+        loading:false,
       }
     }
   }
@@ -182,11 +234,12 @@
       span{
         width:initial;
         margin-left: p2r(4px);
+        color:#454545;
       }
     }
   }
   .num{
-    color:#f74848!important;
+    color:#f74848;
   }
   .line5{
     margin-bottom: p2r(32px);

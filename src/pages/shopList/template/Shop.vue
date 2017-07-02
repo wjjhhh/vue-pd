@@ -25,7 +25,7 @@
     <div class="location" @click="mapGuide(shop)">
       <span class="icon-location"></span>
       <div class="shop-location">{{shop.location}}</div>
-      <div class="shop-distance">{{shop.distance}}</div>
+      <div class="shop-distance">{{shop.distance}}KM</div>
     </div>
   </section>
 </template>
@@ -49,7 +49,7 @@
     },
     methods:{
       goShop(shopBranchId,name,linesvrId){
-        console.log('进入商店',shopBranchId);
+//        console.log('进入商店',shopBranchId);
         this.$router.push({
           name:'shopDetail',
           params:{
@@ -106,13 +106,17 @@
     line-height: p2r(42px);
   }
   .shop-num{
-    margin-top: p2r(84px);
+    /*margin-top: p2r(84px);*/
     line-height: p2r(30px);
+    width: 100%;
+    position: absolute;
+    top:p2r(126px);
+
   }
   .shop-status-name{
     @include font-dpr(11px);
     width:p2r(104px);
-    height: p2r(30px);
+    /*height: p2r(30px);*/
     line-height: p2r(30px);
     display: inline-block;
     text-align: center;

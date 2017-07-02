@@ -57,10 +57,12 @@
       submit(e){
         e.preventDefault();
         var value=this.input.trim();
-        if(value.length<=0)return
+//        if(value.length<=0)return
 //        console.log('提交:'+value)
-          bus.$emit('requestShopList')
-        this.$store.dispatch('setVagueShopBranchName',value)
+
+          console.log('value:'+value)
+          this.$store.dispatch('setVagueShopBranchName',value)
+          bus.$emit('requestShopList','search')
       },
 
     },

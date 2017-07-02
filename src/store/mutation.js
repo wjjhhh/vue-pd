@@ -6,31 +6,34 @@ import{
   SAVE_SERIAL,
   SAVE_OPENID,
   SAVE_SHOPID,
-  SAVE_CITY,
+  SAVE_CITYID,
   SAVE_USERINFO,
   SAVE_CITY_LIST,
-  SAVE_VAGUESHOPBRANCHNAME
+  SAVE_VAGUESHOPBRANCHNAME,
+  SAVE_CITY
 } from './type'
 
 
 const state={
-  latitude: -1,
-  longitude: -1,
+  latitude:'',
+  longitude:'',
   openId:'',
   serial:'',
   shopId:'',
   shopBranchList:[],
   cityId:'',
-  userInfo:{},
+  userInfo:{},//userInfo.phoneNumber
   cityList:[],
-  vagueShopBranchName:''
+  vagueShopBranchName:'',
+  city:'',
+  shopSerialId:''
 }
 
 const getters={
   getLocation(state){
-    if(state.longitude==-1||state.latitude==-1){
-      return undefined;
-    }
+    // if(state.longitude==-1||state.latitude==-1){
+    //   return undefined;
+    // }
     return{
       latitude:state.latitude,
       longitude:state.longitude
@@ -48,7 +51,7 @@ const getters={
   getShopBranchList(state){
     return state.shopBranchList
   },
-  getCity(state){
+  getCityId(state){
     return state.cityId
   },
   getUserInfo(){
@@ -59,6 +62,9 @@ const getters={
   },
   getVagueShopBranchName(){
     return state.vagueShopBranchName
+  },
+  getCity(){
+    return state.city
   }
 }
 
@@ -76,7 +82,7 @@ const mutations={
   [SAVE_OPENID](state,openId){
     state.openId=openId;
   },
-  [SAVE_CITY](state,city){
+  [SAVE_CITYID](state,city){
     state.cityId=city;
   },
   [SAVE_USERINFO](state,userInfo){
@@ -87,6 +93,9 @@ const mutations={
   },
   [SAVE_VAGUESHOPBRANCHNAME](state,vagueShopBranchName){
     state.vagueShopBranchName=vagueShopBranchName
+  },
+  [SAVE_CITY](state,city){
+    state.city=city
   }
 }
 

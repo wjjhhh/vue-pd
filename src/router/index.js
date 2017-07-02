@@ -11,9 +11,9 @@ const City = resolve => require(['@/pages/city/index'], resolve);//城市目录
 const ShopDetail = resolve => require(['@/pages/shopDetail/index'], resolve);//商店排队详情
 const GetNum = resolve => require(['@/pages/getNum/index'], resolve);//取号成功页面
 const GetFail = resolve => require(['@/pages/getFail/index'], resolve);//取号失败页面
-
 const Pay = resolve => require(['@/pages/pay/index'], resolve);//支付页面
-import Loading from '@/components/Loading'
+const PayFail = resolve => require(['@/pages/payFail/index'], resolve);//支付失败
+
 Vue.use(Router)
 
 export default new Router({
@@ -36,12 +36,12 @@ export default new Router({
       ]
     },
     {
-      path:'/shopDetail/:shopBranId/',
+      path:'/shopDetail/:shopBranId/:linesvrId',
       name:'shopDetail',
       component:ShopDetail
     },
     {
-      path:'/shopDetail/:shopBranId/getNum',
+      path:'/shopDetail/:orderId/:shopBranchId/:linesvrId/getNum',
       name:'getNum',
       component:GetNum
     },
@@ -56,7 +56,7 @@ export default new Router({
       component:QueueDetail
     },
     {
-      path:'/shopDetail/:shopBranId/getFail',
+      path:'/getFail/:shopBranId/:linesvrId/:tabName',
       name:'getFail',
       component:GetFail
     },
@@ -65,6 +65,10 @@ export default new Router({
       name:'pay',
       component:Pay
     },
-
+    {
+      path:'/payFail/:shopBranId/:linesvrId',
+      name:'payFail',
+      component:PayFail
+    }
   ]
 })

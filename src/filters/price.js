@@ -6,4 +6,8 @@
 const price=function(val,n=0){
   return parseFloat(val).toFixed(n);
 }
-export default price;
+const division=function(val,n=100){
+  return val/100
+}
+export default division;
+

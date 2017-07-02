@@ -3,18 +3,28 @@
     <div class="logo-fail"></div>
     <!--<div>aho，没排上队，请稍后重试</div>-->
     <div class="font1">取号失败</div>
-    <div class="font1">您所排的：小桌，已达到取号上线</div>
-    <div style="margin-top:20px" class="font2">请联系商家申请退回服务费</div>
+    <div class="font1">您所排的：{{tabName}}，已达到取号上线</div>
+    <div style="margin-top:20px" class="font2" v-if="serviceCharge>0">请联系商家申请退回服务费</div>
     <div class="btn-back" @click="back">返回</div>
   </div>
 </template>
 <script>
   export default{
+    data(){
+      return{
+        serviceCharge:this.$route.params.serviceCharge,//是否支付服务费,
+        tabName:this.$route.params.tabName//桌名
+      }
+    },
     methods:{
       back(){
         console.log('返回')
         this.$router.push({
-          name:'shopDetail'
+          name:'shopDetail',
+          params:{
+            shopBranId:this.$route.params.shopBranId,
+            linesvrId:this.$route.params.linesvrId
+          }
         })
       }
     }

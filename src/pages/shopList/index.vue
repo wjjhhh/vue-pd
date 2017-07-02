@@ -1,16 +1,23 @@
 <template>
 
     <div style='overflow: auto;' :style='{height:shopListHeight}' class="shoplists" v-infinite-scroll="onLoadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="1" ref="scrollContainer">
-      <!--定位完有排队门店-->
-      <div  v-if="hasLocation">
+      <!--定位完-->
+      <div v-if="hasLocation">
+        <!--有门店-->
         <div v-if="hasQueue">
-          <Shop :shop="shop" v-for="shop in shopBranchList" :key="shop.id"></Shop>
+          <Shop :shop="shop" v-for= "shop in shopBranchList" :key="shop.id"></Shop>
           <div class="loading" v-if="loading">页面加载中...</div>
           <div class="loading" v-if="!loading&&!hasNext||specialNo">没有更多门店了</div>
         </div>
+        <!--没门店-->
         <div v-else>
           <div class="icon-noQueue"></div>
-          <div>当前城市无可排队门店</div>
+          <div v-if="searchIn">
+            <div>抱歉，没有您的搜索结果</div>
+          </div>
+          <div v-if="cityIn">
+            <div>当前城市无可排队门店</div>
+          </div>
         </div>
       </div>
       <!--没有定位-->
@@ -29,7 +36,6 @@
 <script type="text/ecmascript-6">
   import Shop from './template/Shop.vue'
   import axios from 'axios';
-  import location from '../../utils/location.js'
   import $util from '../../utils/index.js'
   import $cookies from '../../utils/cookies.js'
   import {bus} from '../../utils/bus.js'
@@ -40,61 +46,88 @@
 
     data(){
       return{
-        hasQueue:true,//false为没有队可排
         shopListHeight:'1200px',
         loading:true,
         page:1,
-        pageSize:10,
+        pageSize:20,
         hasNext:false,
         shopBranchList: [],
         busy:false,
         specialNo:false,//商户列表过少时出现没有更多门店
         vagueShopBranchName:'',
+        hasLocation:true,//true为已成功定位,
+        hasQueue:true,//false为没有队可排
+        searchResult:true,//false为没搜索结果
+        cityIn:false,//true为当前城市没门店
+        searchIn:false,//true为搜索结果没有
       }
     },
     watch:{
-//      '$route':['refreshData'],
+      '$route':['refreshData'],
     },
     methods:{
-
       //定位
       location(){
-        location();
+          console.log('手动开启定位')
+        bus.$emit('handLocation')
       },
       //请求数据
-      fetchData(params){
+      fetchData(params,type){
         this.loading=true;
         this.specialNo=false;
 //        var url='http://localhost:8081/mock/shopList.json';
         var url='/wxQueue/getShopList';
         var _tempArr=[];
-
         axios.get(url,{
           params:{
             shopId:this.$store.getters.getShopId,
             page:params.page,
             pageSize:this.pageSize,
-            userLon:"126.481488",
-            userLat:"39.990464",
+            userLon:this.$store.getters.getLocation.longitude||'',
+            userLat:this.$store.getters.getLocation.latitude||'',
             openId:this.$store.getters.getOpenId,
 //            shopBranchIdList:this.$store.getters.getShopBranchList,
-            cityId:this.$store.getters.getCity,
-            vagueShopBranchName:this.$store.getters.getVagueShopBranchName
+            cityId:this.$store.getters.getCityId,
+            vagueShopBranchName:this.$store.getters.getVagueShopBranchName,
+            cityName:this.$store.getters.getCity
           }
         })
         .then((response)=>{
+          document.title='门店列表'
            this.loading=false;
-            if(response.data.success==false){
+            this.$store.dispatch('setCityList',response.data.shopBranchInfo.cityList||'');
+            //返回空
+            if((typeof response.data)&&Array.isArray(response.data)){
                 this.shopBranchList=[];
                 this.specialNo=true;
+                this.hasLocation=false;
                 return;
             }
             _tempArr=response.data.shopBranchInfo.shopBranchList;
-          this.$store.dispatch('setCityList',response.data.shopBranchInfo.cityList);
             if(_tempArr.length==0){
-              this.hasQueue=false;
+                //搜索进来
+              if(type=='search'){
+                this.hasQueue=false;
+                this.searchIn=true;
+              }
+               //非搜索进来
+              else{
+                  //靠定位城市
+                if(this.$store.getters.getCity){
+                  this.hasQueue=false;
+                  this.cityIn=true;
+                  this.hasLocation=true;
+                }
+                //靠经纬度（城市）
+                else{
+                  this.hasLocation=true
+                }
+              }
             }
-
+            else{
+              this.hasLocation=true;
+              this.hasQueue=true;
+            }
             this.specialNo=true;
             if (params.page != 1 && this.page + 1 != params.page) {
               console.error("页数已经发生变化");
@@ -135,13 +168,16 @@
           this.fetchData(params)
       },
       //刷新
-      refreshData(){
+      refreshData(type){
+          if(this.$route.name=='shopDetail'||this.$route.name=='queue')return
+//          console.log(this.$route.name)
+//        if(this.$route.name!='shopList')return;
         let params={
           page:1,
           pageSize:this.pageSize
         }
         document.body.scrollTop = 0;
-        this.fetchData(params)
+        this.fetchData(params,type)
 
       },
       myNum(){
@@ -164,10 +200,15 @@
       this.refreshData();
       //搜索框组件调用请求商户列表
       var _this=this;
-      bus.$on('requestShopList',function(){
+      bus.$on('requestShopList',function(type){
+          console.log('搜索结果')
         _this.shopBranchList=[]
-        _this.refreshData()
+        _this.refreshData(type)
       })
+      bus.$on('hasLocationFun',function(bool){
+        _this.hasLocation=bool;
+
+      });
     },
     mounted(){
 //      this.$nextTick(function () {
@@ -177,7 +218,7 @@
 //      this.$refs.scrollContainer.style.paddingBottom=this.$refs.myOdder.offsetHeight+'px';
     },
     props:{
-      hasLocation:false,//true为已成功定位,
+//      hasLocation:false,//true为已成功定位,
     },
 
   }

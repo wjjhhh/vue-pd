@@ -17,7 +17,10 @@
     <div class="btn-getNum" @click="getNumFun"><span v-if="lineUpList.isServiceCharge" style="margin-right: .4em">￥{{lineUpList.serviceCharge|priceFilter}}</span>取号</div>
     <div class="getNum">
       <header>取号优惠</header>
-      <!--<div class="couponInfo"><span class="logo"></span><div>取号成功送【xxxxxxxxx】优惠券一张<span style="color:#bfbfbf;">（已派完）</span></div></div>-->
+      <div class="couponInfo" v-if="couponName">
+        <span class="logo"></span>
+        <div>取号成功送【】优惠券一张</div>
+      </div>
       <div class="explainInfo" v-if="lineUpList.isShowInfo">
         <span class="logo"></span>
         <div ref="line" class="line"></div>
@@ -47,7 +50,6 @@
   import Loading from '../../components/Loading.vue'
   import Toast from '../../components/toast.vue'
   import axios from 'axios';
-
   export default{
     components:{
       'CheckPhoneDialog':checkPhoneDialog,
@@ -57,7 +59,7 @@
     mounted(){
     },
     filters:{
-      priceFilter,
+      priceFilter
     },
     methods:{
       //桌排序
@@ -119,9 +121,11 @@
             console.warn(error)
         })
       },
+      back(){
+
+      },
       //请求数据
       fetchData(){
-          console.log(this.$route)
         if(this.$route.name!='shopDetail'){
             return
         }
@@ -131,23 +135,36 @@
             params:{
               linesvrId:this.$route.params.linesvrId,
               shopId:this.$store.getters.getShopId,
+              openId:this.$store.getters.getOpenId,
+              shopBranchId:this.$route.params.shopBranId
             }
         }).then((response)=>{
-            console.log(response.data)
+//            console.log(response.data)
             this.loading=false;
             this.lineUpList=response.data.lineUpList;
             this.tableSort();
+            this.isServiceCharge=response.data.lineUpList.isServiceCharge;
             if(this.lineUpList.discountInfo.length>0){
               this.newline(this.lineUpList.discountInfo);
             }
-
+            this.couponName=response.data.couponName
         }).catch((err)=>{
             console.warn(err)
+          this.content='网络异常';
+          this.toasting=true;
+          var _this=this;
+          setTimeout(()=>{
+            _this.toasting=false;
+            _this.$router.push({
+              name:'shopList'
+            })
+          },1500)
         })
       }
     },
     created(){
       var _this=this;
+      this.fetchData();
       bus.$on('closeCheckPhone',function(){
         _this.checkPhoneDialog=false;
       })
@@ -161,80 +178,102 @@
                 tableId=arr[len-1].id;
                 tableName=arr[len-1].tabName;
                 waittingTableNum=arr[len-1].waittingNum;
-
                 break;
             }
             len--;
         }
-        var url='/wxQueue/queueTakeNumber';
-
+//        console.log('this.isServiceCharge:',_this.isServiceCharge)
+        //不需支付排队服务费
+//        _this.isServiceCharge=0.01;//写死用来测试
+        if(_this.isServiceCharge==0){
+          var url='/wxQueue/queueTakeNumber';
           axios.get(url,{
-              params:{
-                shopBranchId:_this.$route.params.shopBranId,
-                peopleNum:num,
-                serviceCharge:_this.lineUpList.serviceCharge,
-                linesvrId:_this.$route.params.linesvrId,
-                userPhone:_this.$store.getters.getUserInfo.phoneNumber,
+            params:{
+              shopBranchId:_this.$route.params.shopBranId,
+              peopleNum:num,
+              serviceCharge:_this.lineUpList.serviceCharge,
+              linesvrId:_this.$route.params.linesvrId,
+              userPhone:_this.$store.getters.getUserInfo.phoneNumber,
 //                userPhone:'15919156077',
-                openId:_this.$store.getters.getOpenId,
-                shopId:_this.$store.getters.getShopId,
-                shopBranchName:_this.$route.params.shopName,
-                tableName:tableName,
-                waittingTableNum:waittingTableNum,
+              openId:_this.$store.getters.getOpenId,
+              shopId:_this.$store.getters.getShopId,
+              shopBranchName:_this.$route.params.shopName,
+              tableName:tableName,
+              waittingTableNum:waittingTableNum,
 //                linesvrState:_this.lineUpList.linesvrStatus,
-                linesvrState:0,
-                remark:_this.lineUpList.takeNumRemind
-              }
+              linesvrState:0,
+              remark:_this.lineUpList.takeNumRemind,
+              tableId:tableId
+            }
           }).then((response)=>{
             _this.loading=false;
             if(response.data.success){
-                console.log('创建成功')
-                console.log('相关信息:'+response.data.message)
-              //需给服务费
-//                if(_this.lineUpList.isServiceCharge){
-//                  _this.$router.push({
-//                    name:'pay',
-//                    params:{
-//                      shopBranchName:_this.$route.params.shopName,
-//                      peopleNum:num,
-//                      tableName:tableName,
-//                      serviceCharge:_this.lineUpList.serviceCharge
-//                    }
-//                  })
-//                }
-//                //不需给服务费，直接取号
-//                else{
-
-                  _this.$router.push({
-                    name:'getNum',
-                    params:{
-                      linesvrId:_this.$route.params.linesvrId,
-                      shopBranchName:_this.$route.params.shopName,
-                      orderId:response.data.attach.orderId
-                    }
-                  })
-//                }
+              console.log('创建成功')
+              console.log('相关信息:'+response.data.message)
+              _this.$router.push({
+                name: 'getNum',
+                params:{
+                  orderId:response.data.attach.orderId,
+                  shopBranchId:_this.$route.params.shopBranId,
+                  linesvrId:_this.$route.params.linesvrId
+                }
+              })
             }
             else{
-                //失败，弹出toast窗提示
-                console.log('创建失败')
+              //失败，弹出toast窗提示
+              console.log('创建失败')
 //                _this.content='系统繁忙，请重试';
-                 _this.content='服务器错误';
-                _this.toasting=true;
-                setTimeout(()=>{
-                  _this.toasting=false;
-                },1500)
+              _this.content=response.data.message;
+              _this.toasting=true;
+              setTimeout(()=>{
+                _this.toasting=false;
+              },1500)
             }
           }).catch((err)=>{
             console.warn(err);
           })
+        }
+        //需支付排队服务费
+        else{
+          var url='/wxQueue/createOrder';
+          axios.get(url,{
+              params:{
+                shopId:_this.$store.getters.getShopId,
+//                shopBranchName:_this.$route.params.shopName,
+                shopBranchId:_this.$route.params.shopBranId,
+                openId:_this.$store.getters.getOpenId,
+//                totalFee:_this.lineUpList.serviceCharge,
+                totalFee:0.01,
+                tableName:tableName,
+                waittingTableNum:waittingTableNum,
+                linesvrState:_this.lineUpList.linesvrStatus,
+                remark:_this.lineUpList.takeNumRemind,
+                peopleNum:num,
+                linesvrId:_this.$route.params.linesvrId,
+                userPhone:_this.$store.getters.getUserInfo.phoneNumber,
+                tableId:tableId
+              }
+          }).then((response)=>{
+             if(response.data.code==1){
+                  window.location.href=response.data.message
+             }
+             else{
+               _this.content=response.data.message;
+               _this.toasting=true;
+               setTimeout(()=>{
+                 _this.toasting=false;
+               },1500)
+             }
+          }).catch((error)=>{
+              console.warn(error)
+          })
 
+        }
       })
-      this.fetchData();
     },
-//    watch:{
-//      '$route':['fetchData']
-//    },
+    watch:{
+      '$route':['fetchData']
+    },
     data(){
       return{
         checkPhoneDialog:false,
@@ -246,6 +285,8 @@
         loading:true,
         toasting:false,
         content:'系统繁忙，请重试',
+        isServiceCharge:'',
+        couponName:''//优惠券名称
       }
     }
   }

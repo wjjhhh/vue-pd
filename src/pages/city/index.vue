@@ -32,6 +32,7 @@
 //        letter:["A","B","C","D","E","F","G","H","I","J","k","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
       }
     },
+
     mounted(){
       setTimeout(()=>this.fetchData(),500)
 //      this.fetchData();
@@ -93,8 +94,9 @@
       },
       //点击相应城市
       chooseCity(name,city_id){
-        this.$store.dispatch('setCity',city_id);
+        this.$store.dispatch('setCityId',city_id);
         this.$store.dispatch('setVagueShopBranchName','')
+        this.$store.dispatch('setCity',name);
         this.$router.push({
           name:'shopList',
           params:{

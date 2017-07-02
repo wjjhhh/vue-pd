@@ -67,6 +67,7 @@
     .btns{
       $h:p2r(102px);
       width:100%;
+      height: $h;
       line-height: $h;
       text-align: center;
       color:#545454;

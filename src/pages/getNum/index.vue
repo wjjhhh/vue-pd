@@ -22,6 +22,9 @@
 //    mounted(){
 //      this.fetchData();
 //    },
+    watch:{
+      '$route':'fetchData'
+    },
     methods:{
       getCoupon(){
 //        if(this.couponGet==2)return;
@@ -30,6 +33,7 @@
       },
       //拉取数据
       fetchData(){
+          if(this.$route.name!='getNum')return;
 //          var url='http://localhost:8081/mock/queueDetail.json';
 //          axios.get(url,{
 //            params:{
@@ -44,7 +48,8 @@
         axios.get(url,{
             params:{
               orderId:_this.$route.params.orderId,
-              shopBranchName:_this.$route.params.shopBranchName,
+//              shopBranchName:_this.$route.params.shopBranchName,
+              shopBranchId:_this.$route.params.shopBranchId,
               linesvrId:_this.$route.params.linesvrId,
             }
         }).then((response)=>{
@@ -62,16 +67,18 @@
             this.coupon.cashLeastCost=obj.cashLeastCost;
             this.coupon.cashReduceCost=obj.cashReduceCost;
             this.coupon.couponId=obj.couponId;
-            this.coupon.couponStatus=obj.couponStatus;
+            this.coupon.listing=obj.listing;
+//            this.coupon.couponStatus=obj.couponStatus;
+            this.coupon.couponStatus=0;
             this.afterFetch=true;
-
+            document.title=obj.shopBranchName;
         }).catch((error)=>{
             console.warn(error)
         })
       }
     },
     mounted(){
-      console.log(this.couponGet)
+//      console.log(this.couponGet)
     },
     data(){
       return{

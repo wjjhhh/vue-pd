@@ -1,7 +1,9 @@
 <template>
   <div class="loadingContainer">
     <div class="load">
-      <load type="spiningDubbles" color="#000" :size="{ width: '100%', height: '100%' }"></load>
+      <!--<load type="spiningDubbles" color="#000" :size="{ width: '100%', height: '100%' }"></load>-->
+
+      <i class="weui-loading"></i>
     </div>
 
   </div>
@@ -12,9 +14,9 @@
   import load from 'vue-loading-template'
   export default{
     name:'loading',
-    components:{
-      load,
-    }
+//    components:{
+//      load,
+//    }
   }
 </script>
 
@@ -30,13 +32,50 @@
     background-color: rgba(0,0,0,.5);
   }
   .load{
-    width:p2r(100px);
-    height: p2r(100px);
     position: absolute;
-    margin:auto;
-    top:0;
+    z-index: 5000;
+    width: 4.26667rem;
+    min-height: 2.29333rem;
+    top: 5.6rem;
+    left: 50%;
+    margin-left: -2.13333rem;
+    background-color: rgba(0, 0, 0, 0.7);
+    text-align: center;
+    border-radius: 0.16rem;
+    color: #FFFFFF;
+  }
+  .weui-loading{
+    width: p2r(48px);
+    height: p2r(48px);
+    display: inline-block;
+    vertical-align: middle;
+    -webkit-animation: weuiLoading 1s steps(12, end) infinite;
+    animation: weuiLoading 1s steps(12, end) infinite;
+    background: transparent url('../assets/img/loadding.svg') no-repeat;
+    background-size: 100%;
+    position: absolute;
+    left: 0;
     right: 0;
-    left:0;
-    bottom:0;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+  }
+  @-webkit-keyframes weuiLoading {
+    0% {
+      transform: rotate3d(0, 0, 1, 0deg);
+    }
+
+    100% {
+      transform: rotate3d(0, 0, 1, 360deg);
+    }
+  }
+  @keyframes weuiLoading {
+    0% {
+      transform: rotate3d(0, 0, 1, 0deg);
+    }
+
+    100% {
+      transform: rotate3d(0, 0, 1, 360deg);
+    }
   }
 </style>

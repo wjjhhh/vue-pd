@@ -7,8 +7,10 @@ import infiniteScroll from 'vue-infinite-scroll'
 import App from './App'
 import router from './router'
 import stores from './store/store'
+import VueResource from 'vue-resource'
 
 require("lib-flexible");
+
 // console.log(stores)
 Vue.config.productionTip = false
 
@@ -19,7 +21,9 @@ Vue.use(VueLazyLoad,{
   loading:require('./assets/img/default_goods.png'),
   error:require('./assets/img/default_goods.png'),
 });
-
+Vue.use(VueResource);
+Vue.http.options.emulateJSON = true;
+//axios.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded'
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

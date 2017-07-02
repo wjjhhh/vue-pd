@@ -21,7 +21,11 @@ export default {
     commit(types.SAVE_SERIAL,serial);
   },
 
-  //保存用户城市
+  //保存用户城市id
+  setCityId:({commit},cityId)=>{
+    commit(types.SAVE_CITYID,cityId)
+  },
+  //保存用户城市名称
   setCity:({commit},city)=>{
     commit(types.SAVE_CITY,city)
   },

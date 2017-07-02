@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Queue :queueDetailData="queueDetailData" :coupon="coupon"></Queue>
+    <Queue :queueDetailData="queueDetailData" :coupon="coupon" v-if="afterInit"></Queue>
     <div class="cancelQueue" @click="dialogShow=true" v-if="orderStatus===0">取消排队</div>
     <DDialog v-if="dialogShow" v-bind:content="content">
       <div slot="btns" class="btns">
@@ -25,11 +25,16 @@
     },
     created(){
       this.fetchData();
+
     },
     methods:{
       fetchData(){
+          if(this.$route.name=='queueDetail'){
+            this.checkUserBindedWechat()
+          }
+
 //          var url='http://localhost:8081/mock/queueDetail.json'
-          var url='/wxQueue/getOrderDetail'
+          var url='/wxQueue/getOrderDetail1'
           axios.get(url,{
               params:{
                 orderId:this.$route.params.orderId,
@@ -37,12 +42,22 @@
               }
           }).then((response)=>{
               this.queueDetailData=response.data;
+              this.queueDetailData.serviceCharge=response.data.totalFee;
               this.loading=false;
               this.orderStatus=response.data.orderStatus;
               this.coupon.cardName=response.data.cardName;
               this.coupon.cashReduceCost=response.data.cashReduceCost;
               this.coupon.cashLeastCost=response.data.cashLeastCost;
               this.coupon.couponStatus=response.data.couponStatus;
+              this.coupon.couponId=response.data.couponId;
+              this.coupon.listing=response.data.list;
+              this.afterInit=true;
+              //有取号费的情况
+              if(this.queueDetailData.serviceCharge>0){
+                this.content='取消后不可撤回，取号服务费不退还，确定取消吗？'
+              }
+              //改变title
+            document.title=response.data.branchName
           }).catch((error)=>{
               console.warn(error)
           })
@@ -59,17 +74,59 @@
         }).then((response)=>{
             if(response.data.code==1){
                 console.log('取消成功')
-                this.$router.go(-1);
+                this.dialogShow=false;
+                this.$router.push({
+                  name:'queue',
+                  params:{
+                    openId:this.$store.getters.getOpenId
+                  }
+                })
             }
             else if(response.data.code==-1){
               console.log('取消失败')
             }
             else if(response.data.code==4001){
-                console.log('异常')
+                console.log('网络异常')
             }
         }).catch((error)=>{
             console.warn(error)
         })
+      },
+      //验证有无关注公众号
+      checkUserBindedWechat(){
+        var SHOP_SERIAL = this.$store.getters.getSerial;
+        $(function() {
+          //var SHOP_SERIAL = getCookie("SHOP_SERIAL");
+          if(null != SHOP_SERIAL && SHOP_SERIAL != ""){
+            $.ajax({
+              url : 'http://m.zb25.com.cn/saofu_mobile/checkUserBindStatus',
+              data : {
+                "serial" : SHOP_SERIAL
+              },
+              type : 'post',
+              cache : false,
+              dataType : 'json',
+              success : function(data) {
+                if (data != null) {
+                  var guildFocusStr = data.guildFocusStr;
+                  if(guildFocusStr != null && guildFocusStr == "1"){
+                    var hasBindedShop = data.hasBindedShop;
+                    if(hasBindedShop == "0"){
+                      var qrName = data.QRPublicName;
+                      var qrUrl = data.QRCodeURL;
+                      if(qrName != "" && qrUrl != ""){
+                        var params = qrName+"**"+qrUrl;
+                        followModule(params);
+                      }
+                    }
+                  }
+                }
+              },
+              error : function() {
+              }
+            });
+          }
+        });
       }
     },
     mounted(){
@@ -84,8 +141,9 @@
         queueDetailData:{},
         coupon:{},
         orderStatus:1,//0为出现取消排队，1则不出现取消排队按钮
-        content:'取消后不可撤回，取号服务费不退还，确定取消吗？',
-        loading:true
+        content:'取消后不可撤回确定取消吗？',
+        loading:true,
+        afterInit:false,//确保请求顺序
       }
 
     }

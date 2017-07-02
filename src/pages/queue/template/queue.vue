@@ -26,7 +26,7 @@
     },
     methods:{
       gotoShop(id,orderStatus,linesvrId){
-        console.log('进入排单号详情',id)
+//        console.log('进入排单号详情',id)
         this.$router.push({
           name:'queueDetail',
           params:{

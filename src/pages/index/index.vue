@@ -2,8 +2,8 @@
   <div>
     <Search class="search" ref="search" v-bind:isShow="isShow" :positioning="positioning" :position="position"></Search>
     <loading v-show="isLoading"></loading>
-    <keep-alive>
-      <router-view  class='router' :style="{height:containerHeight}" style="overflow: scroll;" :hasLocation="hasLocation">
+    <keep-alive v-if="afterInit">
+      <router-view  class='router' :style="{height:containerHeight}" style="overflow: scroll;">
       </router-view>
     </keep-alive>
     <!--<div class="btn-my-odder" @click="myNum" ref="myOdder" v-if="isShow">我的排单号</div>-->
@@ -15,7 +15,8 @@
   import ShopList from '../shopList/index'
   import loading from '../../components/Loading'
   import $utils from '../../utils/index.js'
-
+  import axios from 'axios'
+  import {bus} from '../../utils/bus.js'
   export default{
     data(){
       return{
@@ -23,8 +24,9 @@
         containerHeight:'1200px',
         isLoading:true,//true:loading中
         positioning:true,//true:定位中
-        position:'选择城市',//定位位置
-        hasLocation:false,//true为已成功定位,
+        position:this.$store.getters.getCity,//定位位置
+//        hasLocation:false,//true为已成功定位,
+        afterInit:false,//确保地理初始化才开始
       }
     },
     components:{
@@ -33,21 +35,6 @@
       loading
     },
     methods:{
-      //定位
-      location(){
-//        var r=Math.random();
-         var r=1;
-        this.positioning=false
-        if(r>0.5){
-          console.log('定位成功');
-          this.hasLocation=true;
-          this.position='xx市'
-        }
-        else{
-          console.log('定位失败');
-          this.hasLocation=false;
-        }
-      },
       myNum(){
         console.log('进入我的排单号')
         this.$router.push({
@@ -64,39 +51,92 @@
               this.containerHeight=window.innerHeight-this.$refs.search.$el.offsetHeight+'px';
             })
       },
-      //微信api定位
+      //经纬度转城市
+      getAttr(latlon,that){
+        var _this=this;
+        const params = {
+          output: "jsonp",
+          key: "GACBZ-FV5RI-WKJGG-5TVJZ-44SSE-IEFTO",
+          location: latlon,
+          coord_type: 5 //[默认]腾讯、google、高德坐标
+        };
+        const url = "http://apis.map.qq.com/ws/geocoder/v1/";
+        this.$http.jsonp(url,{params:params},{jsonp:'QQMap'}).then((ret)=>{
+//            console.log(ret.body.result.ad_info.city)
+          this.position=ret.body.result.ad_info.city
+          this.$store.dispatch('setCity',ret.body.result.ad_info.city);
+          this.positioning=false;
+          bus.$emit('hasLocationFun',true);
+          this.afterInit=true;
+//          that.$store.dispatch("setUserAddress",{address:ret.body.result.address});
+        }).catch((error)=>{
+//          alert('定位失败')
+          bus.$emit('hasLocationFun',false);
+          this.positioning=false;
+          this.position='选择城市'
+          this.afterInit=true;
+
+        })
+
+      },
+      //微信api定位，腾讯地图返回城市名
       getLocation(){
-
-      }
-    },
-    created(){
-      if ($utils.isWeixinBrowser()) {
+        var _this=this;
         wx.getLocation({
-          type: 'gcj02',// 火星坐标
-          success: (res) => {
-              console.log(100)
-//            this.$store.dispatch("setUserPoint", res);
-//            this.getAttr(res.latitude, res.longitude);
-          },
-          complete: () => {
+          type:'wgs84',
+          success:function(res){
+            console.log('地理回调成功')
+            _this.$store.dispatch('setUserPoint', {latitude:res.latitude, longitude:res.longitude});
 
+            var _location=this,_location=_this.$store.getters.getLocation.latitude+','+_this.$store.getters.getLocation.longitude;
+            _this.getAttr(_location);
+          },
+          fail:function(){
+            bus.$emit('hasLocationFun',false);
+          },
+          cancel:function(){
+            bus.$emit('hasLocationFun',false);
           }
-        });
-      } else { console.error("请在微信客户端中打开");}
+        })
+        this.isLoading=false;
+      },
     },
+
+    created(){
+        var _this=this;
+          if ($utils.isWeixinBrowser()) {
+//            _this.$store.dispatch('setUserPoint', {latitude:23.129163, longitude:113.264435});
+//            var _this=this,_location=_this.$store.getters.getLocation.latitude+','+_this.$store.getters.getLocation.longitude;
+//
+//            this.getAttr(_location)
+//
+//            _this.afterInit=true;
+//            bus.$emit('hasLocationFun',false)
+            wx.ready(() => {
+              console.log('ready')
+              this.getLocation();
+//              this.stopShare();
+                wx.hideAllNonBaseMenuItem();
+            });
+          }else { console.error("请在微信客户端中打开");}
+          bus.$on('handLocation',function(){
+            _this.getLocation();
+          })
+    },
+
     mounted(){
         this.listContainerHeight();
-      window.addEventListener("resize", this.listContainerHeight);
-//      this.isLoading=false
-      setTimeout(()=>{
-          this.isLoading=false;
-          this.location();
-      },1000)
+        window.addEventListener("resize", this.listContainerHeight);
+        this.isLoading=false;
+//          this.location();
     },
     beforeRouteEnter (to, from, next) {
       console.log('钩子beforeRouteEnter')
+      if(to.name=='shopList'){
+          document.title='门店列表'
+      }
       next(vm => {
-        document.title = ""
+
       //进入城市列表，搜索框需隐藏
         if(to.name=='city'){
           vm.isShow=false;
@@ -112,16 +152,30 @@
       // 由于会渲染同样的 Foo 组件，因此组件实例会被复用。而这个钩子就会在这个情况下被调用。
       // 可以访问组件实例 `this`
       console.log('钩子beforeRouteUpdate')
+      console.log(to.name)
       //进入城市列表，搜索框和我的排单号需隐藏
       if(to.name=='city'){
           this.isShow=false;
+          document.title='城市列表'
       }
-      else{
-          this.isShow=true;
-          this.position=to.params.city||'选择城市'
+      else if(to.name=='shopList'){
+        this.isShow=true;
+        this.position=this.$store.getters.getCity||to.params.city||'选择城市';
+        document.title='门店列表'
       }
       next();
     },
+    beforeRouteLeave(to,from,next){
+      console.log('钩子beforeRouteLeave')
+      if(to.name=='queue'){
+          document.title='我的排单号'
+      }
+      else if(to.name=='shopDetail'){
+          document.title='商店详情'
+      }
+      next()
+    }
+
   }
 </script>
 

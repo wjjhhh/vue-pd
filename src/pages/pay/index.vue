@@ -13,6 +13,7 @@
   </div>
 </template>
 <script>
+  import axios from 'axios'
   export default{
     data(){
       return{
@@ -25,16 +26,31 @@
     methods:{
       pay(){
         console.log('确认支付')
-        if(Math.random()>.5){
-          this.$router.push({
-            name:'getNum'
-          })
-        }
-       else{
-          this.$router.push({
-            name:'getFail'
-          })
-        }
+//        axios.get(url,{
+//            params:{
+//              shopId:'',
+//              shopBranchId:'',
+//              openId:this.$store.getters.getOpenId,
+//              totalFee:this.$route.params.serviceCharge,
+//              tableName:this.$route.params.tableName,
+//              waittingTableNum:'',
+//              linesvrState:'',
+//              remark:'',
+//              peopleNum:this.$route.params.peopleNum,
+//              linesvrId:'',
+//              userPhone:this.$store.getters.getUserInfo.phoneNumber
+//            }
+//        })
+//        if(Math.random()>.5){
+//          this.$router.push({
+//            name:'getNum'
+//          })
+//        }
+//       else{
+//          this.$router.push({
+//            name:'getFail'
+//          })
+//        }
       }
     }
   }

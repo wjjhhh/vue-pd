@@ -1,0 +1,236 @@
+/*
+ *  changed by outside 2016/06/24
+ *
+ *  add [data-dpr="2"]
+ *  add [data-dpr="3"]
+ */
+
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+input { -webkit-appearance: none;}
+.cl:after {
+    display: block;
+    content: "";
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+.cl {*zoom: 1;}
+.fl {float: left;}
+.fr {float: right;}
+
+
+.followTipsBg{
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -10;
+    width: 100%;
+    height: 55px;
+    background-color: #000;
+    opacity: .65;
+    z-index: 999;
+}
+.followTipsWp{
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9;
+    padding: 0 3.33%;
+    width: 100%;
+    height: 55px;
+    line-height: 55px;
+    text-align: center;
+    font-size: 13px;
+    color: #fff;
+}
+.followBtn{
+    margin-left: 3.33%;
+    width: 60px;
+    height: 30px;
+    line-height: 32px;
+    text-align: center;
+    font-size: 13px;
+    color: #fff;
+    border: none;
+    outline: none;
+    background-color: #0DAB41;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.followIcon{
+    margin-left: 3.33%;
+    display: inline-block;
+    width: 17px;
+    height: 17px;
+    vertical-align: middle;
+    background: url("../../../images/bind/followIcon.png") no-repeat;
+    background-size: 100% 100%;
+}
+.followCodeBg{
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    opacity: .6;
+    z-index: 1000;
+}
+.followCodeWp{
+    position: absolute;
+	top: 50%;
+	left: 50%;
+	z-index: 99;
+	margin: 0 auto;
+	width: 80%;
+	margin-left: -40%;
+	background: #fff;
+	z-index: 1001;
+	transform: translate(0, -50%);
+	-webkit-transform: translate(0, -50%);
+	-moz-transform: translate(0, -50%);
+	-o-transform: translate(0, -50%);
+	-ms-transform: translate(0, -50%);
+	font-family: "微软雅黑";
+}
+.codeH1{
+    width: 100%;
+    height: 45px;
+    line-height: 45px;
+    text-align: center;
+    font-size: 16px;
+    border-bottom: 2px solid #A9A9A9;
+}
+.codeBd{
+    text-align: center;
+}
+.codeBd .codeImg{
+    width: 100%;
+    margin: 0 auto;
+    padding-top: 22px;
+}
+.codeImg .hidden {
+    display: none;
+}
+.codeImg img{
+    max-width: 80%;
+}
+.codeInfo{
+    padding: 15px 0;
+    font-size: 16px;
+}
+.codeClose{
+    position: absolute;
+    top: 8px;
+    right: 1.94%;
+    z-index: 999;
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background: url("../../../images/bind/codeIcon.png") no-repeat;
+    background-size: 100% 100%;
+    cursor: pointer;
+}
+
+/* fiexible.js 分辨率密度为2 */
+.dpr2.followTipsBg{
+    height: 110px;
+}
+.dpr2 .followTipsWp{
+    height: 110px;
+    line-height: 110px;
+    font-size: 26px;
+}
+.dpr2 .followBtn{
+    width: 120px;
+    height: 60px;
+    line-height: 64px;
+    font-size: 26px;
+    border-radius: 16px;
+}
+.dpr2 .followIcon{
+    width: 34px;
+    height: 34px;
+}
+.dpr2 .codeH1{
+    height: 90px;
+    line-height: 90px;
+    font-size: 32px;
+    border-bottom: 4px solid #A9A9A9;
+}
+.dpr2 .codeBd .codeImg{
+    padding-top: 44px;
+}
+.dpr2 .codeImg .hidden {
+    position: absolute;
+    display: block;
+    width: 3.466667rem;
+    height: 3.466667rem;
+    top: -0.666667rem;
+    left: -0.666667rem;
+    opacity: 0;
+}
+.dpr2 .codeInfo{
+    padding: 30px 0;
+    font-size: 32px;
+}
+.dpr2 .codeClose{
+    top: 16px;
+    width: 60px;
+    height: 60px;
+}
+
+
+/* fiexible.js 分辨率密度为3 */
+.dpr3.followTipsBg{
+    height: 165px;
+}
+.dpr3 .followTipsWp{
+    height: 165px;
+    line-height: 165px;
+    font-size: 39px;
+}
+.dpr3 .followBtn{
+    width: 180px;
+    height: 90px;
+    line-height: 96px;
+    font-size: 39px;
+    border-radius: 24px;
+}
+.dpr3 .followIcon{
+    width: 51px;
+    height: 51px;
+}
+.dpr3 .codeH1{
+    height: 135px;
+    line-height: 135px;
+    font-size: 48px;
+    border-bottom: 6px solid #A9A9A9;
+}
+.dpr3 .codeBd .codeImg{
+    padding-top: 66px;
+}
+.dpr3 .codeImg img {
+    width: 80%;
+}
+.dpr3 .codeImg .hidden {
+    position: absolute;
+    display: block;
+    width: 3.466667rem;
+    height: 5.466667rem;
+    top: -3.466667rem;
+    left: -1.466667rem;
+    opacity: 0;
+}
+.dpr3 .codeInfo{
+    padding: 45px 0;
+    font-size: 48px;
+}
+.dpr3 .codeClose{
+    top: 24px;
+    width: 90px;
+    height: 90px;
+}

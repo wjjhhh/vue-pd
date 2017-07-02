@@ -1,7 +1,7 @@
 <template>
   <div class="dialogContainer">
     <!--手机验证弹窗-->
-    <div class="dialog" v-if="!hasBind">
+    <div class="dialog" v-if="!hasBind&&!check">
       <header>验证手机</header>
       <span class="btn-close" @click="close"></span>
         <input placeholder="请输入您的手机号码" v-model="phone"/>
@@ -28,12 +28,14 @@
         <span class="btn-sure" @click="closeNoTime">确定</span>
       </div>
     <Toast v-show="toasting" v-bind:content="content"></Toast>
+    <Loading v-show="loading"></Loading>
   </div>
 </template>
 <script>
   import {bus} from '../utils/bus.js'
   import axios from 'axios'
   import Toast from '../components/toast.vue'
+  import Loading from '../components/Loading.vue'
   export default{
     mounted(){
       //阻止手滑滚动
@@ -43,7 +45,8 @@
 
     },
     components:{
-      Toast
+      Toast,
+      Loading
     },
     props:{
       'numRange':'',
@@ -125,16 +128,17 @@
 ////              phoneNum:this.phone
 //            phoneNum:'15919156077'
 //          }
+        this.loading=true;
         axios.get('/wxQueue/saveUserInfo',{
             params:{
               openId:this.$store.getters.getOpenId,
               phoneNum:this.phone
-//              phoneNum:'15919156077'
             }
           }
         ).then((repsonse)=>{
+          this.loading=false;
             if(response.data.success){
-//                this.check=true;
+                this.check=true;
             }
             else{
                 this.error=response.data.message
@@ -173,7 +177,9 @@
         eatnum:[1,2,3,4],//就餐选择人数选项[1,2,3,4],
         noTime:false,//true为达到取号上限,
         content:'',//toast文本内容
-        toasting:false,//toast弹窗
+        toasting:false,//toast弹窗,
+        loading:false,//loading
+        check:true,//成功保存验证手机
       }
     }
   }

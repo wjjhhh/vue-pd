@@ -25,7 +25,6 @@
       Empty
     },
     created(){
-        this.isLoading=false;
         this.fetchData();
     },
     methods:{
@@ -40,6 +39,8 @@
       },
       fetchData(){
         if(this.$route.name!='queue')return;
+        console.log('this.$route.name'+this.$route.name)
+
 //        var url='http://localhost:8081/mock/queue.json';
         var url='/wxQueue/getConsumerOrderList';
         this.isLoading=true;
@@ -48,6 +49,7 @@
                 openId:this.$store.getters.getOpenId
             }
         }).then((response)=>{
+          document.title='我的排单号'
           if(typeof response.data){
               if(JSON.stringify(response.data)=='{}'){
                 return;
@@ -106,6 +108,7 @@
     .content{
       color:#adadad;
       @include font-dpr(14px);
+      margin:0 p2r(20px);
     }
     .dotted{
       height: 50%;
