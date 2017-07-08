@@ -2,9 +2,12 @@
   <div class="queuesContainer">
     <Empty v-if="queueList.length==0"></Empty>
     <Queue :queue="queue" v-for='queue in queueList1' :key="queue.id"></Queue>
+
     <div class="old">
       <div v-if="queueList0.length" class="oldTitle">
-        <span class="dotted"></span><span class="content">历史</span><span class="dotted"></span>
+        <span class="dotted"></span>
+        <span class="content">历史</span>
+        <span class="dotted"></span>
       </div>
       <Queue :queue="queue" v-for='queue in queueList0' :key="queue.id"></Queue>
     </div>
@@ -18,6 +21,7 @@
   import Empty from '../../components/Empty.vue'
   import axios from 'axios';
   import $cookies from '../../utils/cookies.js'
+  import Shop from '../shopList/template/Shop.vue'
   export default{
     components:{
       Queue,
@@ -36,11 +40,12 @@
         this.queueList1=this.queueList.filter(function(item,i){
           return item.orderStatus==0
         })
+
       },
       fetchData(){
         if(this.$route.name!='queue')return;
-        console.log('this.$route.name'+this.$route.name)
 
+        document.title='我的排单号'
 //        var url='http://localhost:8081/mock/queue.json';
         var url='/wxQueue/getConsumerOrderList';
         this.isLoading=true;
@@ -49,7 +54,6 @@
                 openId:this.$store.getters.getOpenId
             }
         }).then((response)=>{
-          document.title='我的排单号'
           if(typeof response.data){
               if(JSON.stringify(response.data)=='{}'){
                 return;
@@ -90,20 +94,6 @@
     margin: p2r(42px) p2r(24px) p2r(48px);
     span{
       position:relative;
-      /*&:before{*/
-         /*content:'';*/
-         /*border-bottom:5px dotted #e1e1e1;*/
-         /*position: absolute;*/
-         /*display: block;*/
-         /*width:100%;*/
-         /*right:100%;*/
-       /*}*/
-      /*&:after{*/
-         /*content:'';*/
-         /*border-bottom:1px dotted #e1e1e1;*/
-         /*position: absolute;*/
-         /*width:100%;*/
-       /*}*/
     }
     .content{
       color:#adadad;

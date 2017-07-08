@@ -9,10 +9,7 @@
     <link rel="stylesheet" href="/static/linesvr/css/banner.css">
     <script type="text/javascript" src="/static/linesvr/js/zepto.min.js"></script>
     <script type="text/javascript" src="/static/linesvr/js/banner.js"></script>
-    <script type="text/javascript" src="/static/zepto.min.js"></script>
-    <script type="text/javascript" src="/static/banner.js"></script>
-    <!--百度统计js-->
-    <script type="text/javascript" src="/static/js/baidutongji.js"></script>
+
     <script type="text/javascript" src="https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js"></script>
     <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 
@@ -20,5 +17,21 @@
   <body>
     <div id="app"></div>
     <!-- built files will be auto injected -->
+    <input value="{{ timestamp }}" type="hidden" name="server_version" id="server_version">
+    <script>
+      var SERVER_TIME = document.getElementById("server_version");
+      var REMOTE_VER = SERVER_TIME && SERVER_TIME.value;
+      if (REMOTE_VER) {
+        var LOCAL_VER = sessionStorage && sessionStorage.PAGEVERSION;
+        if (LOCAL_VER && parseInt(LOCAL_VER) >= parseInt(REMOTE_VER)) {
+          //说明html是从本地缓存中读取的
+          location.reload(true);
+        } else {
+          //说明html是从server端重新生成的，更新LOCAL_VER
+          sessionStorage.PAGEVERSION = REMOTE_VER;
+        }
+      }
+
+      </script>
   </body>
 </html>

@@ -9,7 +9,6 @@
 
 <script>
   import axios from 'axios';
-//  import $cookies from './utils/cookies.js';
   import {bus} from './utils/bus.js'
 
 export default {
@@ -17,7 +16,6 @@ export default {
   data(){
       return{
         afterInit:false,
-//        shopId: "${shopId}"
       }
   },
   methods:{
@@ -28,10 +26,9 @@ export default {
 //      var url='http://localhost:8081/mock/enterQueue.json'
 //      axios.get(url).then((response)=>{
 //        //存储openId
-////        $cookies.setCookie('pd_openId',response.data.openId);
-//        this.$store.dispatch('setOpenId',response.data.openId);
+//        this.$store.dispatch
+//        ('setOpenId',response.data.openId);
 //        //存储商户id
-////        $cookies.setCookie('pd_shopId',response.data.shopId);
 //        this.$store.dispatch('setShopId',response.data.shopId);
 //        this.afterInit=true;
 //      }).catch((error)=>{
@@ -88,7 +85,11 @@ export default {
 //    console.log(to);
 //    console.log(from);
 //    console.log(next);
+  },
+  beforeRouteLeave(to,from,next){
+      console.log('leave')
   }
+
 }
 </script>
 

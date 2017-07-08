@@ -1,16 +1,16 @@
 <template>
-  <div>
+  <div ref="scroll">
     <!--侧边索引-->
     <nav class="catalogsContainer">
       <ul class="catalogs">
-        <li class="catalog" v-for="item in letter">{{item}}</li>
+        <li class="catalog" v-for="item in letter" @click="goIndex(item)">{{item}}</li>
       </ul>
     </nav>
     <!--城市列表-->
     <div class="citys">
       <ul v-for="item in citys">
-        <li class="city-index">{{item.index}}</li>
-        <li v-for="i in item.data" class="city-list" @click="chooseCity(i.name,i.city_id)">{{i.name}}</li>
+        <li class="city-index" :id='"item"+item.index'>{{item.index}}</li>
+        <li v-for="i in item.data" class="city-list" @click="chooseCity(i.name,i.city_id,i.father_id)">{{i.name}}</li>
       </ul>
     </div>
     <Loading v-show="isLoading"></Loading>
@@ -19,7 +19,8 @@
 <script>
   import axios from 'axios';
   import Loading from '../../components/Loading';
-  import {bus} from '../../utils/bus.js'
+  import {bus} from '../../utils/bus.js';
+  import $cache from '../../utils/cache.js'
   export default{
     components:{
       Loading,
@@ -34,8 +35,7 @@
     },
 
     mounted(){
-      setTimeout(()=>this.fetchData(),500)
-//      this.fetchData();
+      this.fetchData();
     },
 
     filters:{
@@ -45,17 +45,19 @@
     },
     methods:{
       fetchData(){
-        this.isLoading=false;
 //        let url='http://localhost:8081/mock/city.json';
         let url='/wxQueue/getCityList';
         var _this=this,_city=[];
         axios.get(url,{
             params:{
-              cityIdList:this.$store.getters.getCityList
+              cityIdList:this.$store.getters.getCityList||$cache.get('cityList')
             }
-        }).then(function(response){
+        }).then((response)=>{
           _city=response.data.cityList;
           _this.dealCity(_city,'firstLetter');
+          _this.isLoading=false;
+        }).catch((error)=>{
+            console.warn(error)
         })
       },
 //数组，分类字段（如firstLetter首字母）
@@ -93,10 +95,11 @@
         })
       },
       //点击相应城市
-      chooseCity(name,city_id){
+      chooseCity(name,city_id,fatherId){
         this.$store.dispatch('setCityId',city_id);
         this.$store.dispatch('setVagueShopBranchName','')
         this.$store.dispatch('setCity',name);
+        this.$store.dispatch('setFatherId',fatherId)
         this.$router.push({
           name:'shopList',
           params:{
@@ -104,6 +107,10 @@
           },
         })
       },
+      //点击索引跳到相应字母位置
+      goIndex(index){
+        this.$refs.scroll.scrollTop=document.getElementById('item'+index).offsetTop-this.$refs.scroll.offsetTop
+      }
     },
 
   }
@@ -123,7 +130,7 @@
     right:0;
     top:0;
     background-color: #fff;
-    pointer-events: none;
+    /*pointer-events: none;*/
   }
   .catalogs{
     position: absolute;
@@ -140,7 +147,9 @@
   .citys{
     background-color: #fff;
     li{
-
+      &:last-child{
+        border-bottom: 0;
+      }
     }
   }
   .city-index{

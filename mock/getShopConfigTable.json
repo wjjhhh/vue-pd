@@ -26,6 +26,7 @@
     "isServiceCharge":true,
     "serviceCharge":2.00,
     "isShowInfo":true,
-    "discountInfo":"1、分微积分金额为\n2、分微积分金额为\n3、嗡嗡嗡"
+    "discountInfo":"1、分微积分金额为\n2、分微积分金额为\n3、嗡嗡嗡",
+    "takeNumRemind":"1"
   }
 }

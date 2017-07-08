@@ -51,7 +51,7 @@ export default new Router({
       component:Queue,
     },
     {
-      path:'/queueDetail/:orderId/:linesvrId',
+      path:'/queueDetail/:orderId/:linesvrId/:source',
       name:'queueDetail',
       component:QueueDetail
     },
@@ -72,3 +72,4 @@ export default new Router({
     }
   ]
 })
+

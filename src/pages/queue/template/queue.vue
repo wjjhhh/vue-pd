@@ -3,7 +3,11 @@
     <div class="shopName">{{queue.branchName}}</div>
     <div class="table">
       <div class="tableType">
-        <span>{{queue.peopleNum}}人{{queue.tableName}}</span><span>已取号</span>
+        <span>{{queue.peopleNum}}人{{queue.tableName}}</span>
+        <span v-if="queue.orderStatus==0">已取号</span>
+        <span v-if="queue.orderStatus==1">已就餐</span>
+        <span v-if="queue.orderStatus==2">已过号</span>
+        <span v-if="queue.orderStatus==3">已取消</span>
       </div>
       <div class="tableStatus">
         <span>还需等待</span><span class="tableLeft">{{queue.orderStatus==0?queue.waittingTableNum:'--'}}桌</span>
@@ -32,7 +36,8 @@
           params:{
             orderId:id,
             orderStatus:orderStatus,
-            linesvrId:linesvrId
+            linesvrId:linesvrId,
+            source:0
           }
         })
       }
@@ -44,8 +49,8 @@
   @import "../../../assets/css/base";
   .queue{
     width:p2r(702px);
-    height: p2r(290px);
-    overflow: hidden;
+    /*height: p2r(290px);*/
+    /*overflow: hidden;*/
     background-color: #fff;
     margin:0 auto p2r(24px);
     border-radius: p2r(12px);
@@ -53,6 +58,9 @@
     box-sizing: border-box;
     .shopName{
       @include font-dpr(19px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .table{
       padding:p2r(40px) 0 p2r(30px);
@@ -81,6 +89,8 @@
       margin: p2r(30px) 0;
       color:#7d7d7d;
       @include font-dpr(13px);
+      height: p2r(60px);
+      line-height: p2r(30px);
     }
   }
   .queue1{

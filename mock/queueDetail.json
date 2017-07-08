@@ -9,5 +9,7 @@
   "takeNumRemind": "xxx",
   "linesvrStatus": 3,
   "couponId": "111111",
-  "waittingTime":"20分钟"
+  "waittingTime":"20分钟",
+  "cashLeastCost":"0.01",
+  "cashReduceCost":"0.02"
 }

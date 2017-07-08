@@ -1,7 +1,7 @@
 <template>
   <div class="getFail">
     <div class="logo-fail"></div>
-    <div class="font1">系统繁忙，请稍后重试~</div>
+    <div class="font1">系统繁忙，请重新取号</div>
     <!--<div style="margin-top:20px" class="font2" v-if="serviceCharge>0">请联系商家申请退回服务费</div>-->
     <div class="btn-back" @click="back">返回</div>
   </div>
@@ -13,6 +13,17 @@
 //          serviceCharge:this.$route.params.serviceCharge,//是否支付服务费
 //        }
 //    },
+    watch:{
+      '$route':function(){
+          if(this.$route.name!='payFail'){
+              document.title='取号失败'
+              return;
+          }
+      }
+    },
+    created(){
+      document.title='取号失败'
+    },
     methods:{
       back(){
         console.log('返回')

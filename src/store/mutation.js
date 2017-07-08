@@ -10,7 +10,8 @@ import{
   SAVE_USERINFO,
   SAVE_CITY_LIST,
   SAVE_VAGUESHOPBRANCHNAME,
-  SAVE_CITY
+  SAVE_CITY,
+  SAVE_FATHER_ID
 } from './type'
 
 
@@ -23,10 +24,11 @@ const state={
   shopBranchList:[],
   cityId:'',
   userInfo:{},//userInfo.phoneNumber
-  cityList:[],
+  cityList:'',
   vagueShopBranchName:'',
   city:'',
-  shopSerialId:''
+  shopSerialId:'',
+  fatherId:''
 }
 
 const getters={
@@ -65,6 +67,9 @@ const getters={
   },
   getCity(){
     return state.city
+  },
+  getFatherId(){
+    return state.fatherId
   }
 }
 
@@ -96,6 +101,9 @@ const mutations={
   },
   [SAVE_CITY](state,city){
     state.city=city
+  },
+  [SAVE_FATHER_ID](state,fatherId){
+    state.fatherId=fatherId
   }
 }
 

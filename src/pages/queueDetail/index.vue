@@ -29,6 +29,9 @@
     },
     methods:{
       fetchData(){
+          if(this.$route.name!='queueDetail'){
+              return;
+          }
           if(this.$route.name=='queueDetail'){
             this.checkUserBindedWechat()
           }
@@ -38,7 +41,8 @@
           axios.get(url,{
               params:{
                 orderId:this.$route.params.orderId,
-                linesvrId:this.$route.params.linesvrId
+                linesvrId:this.$route.params.linesvrId,
+                source:this.$route.params.source
               }
           }).then((response)=>{
               this.queueDetailData=response.data;
@@ -51,6 +55,11 @@
               this.coupon.couponStatus=response.data.couponStatus;
               this.coupon.couponId=response.data.couponId;
               this.coupon.listing=response.data.list;
+              this.coupon.cardType=response.data.cardType;
+              this.coupon.discount=response.data.discount;
+              this.coupon.gift=response.data.gift;
+              this.coupon.subTitle=response.data.subTitle;
+
               this.afterInit=true;
               //有取号费的情况
               if(this.queueDetailData.serviceCharge>0){
@@ -64,6 +73,7 @@
       },
       cancelFun(){
         console.log('取消排队')
+
         var url='/wxQueue/deleteOrder'
         axios.get(url,{
             params:{
@@ -95,38 +105,8 @@
       //验证有无关注公众号
       checkUserBindedWechat(){
         var SHOP_SERIAL = this.$store.getters.getSerial;
-        $(function() {
-          //var SHOP_SERIAL = getCookie("SHOP_SERIAL");
-          if(null != SHOP_SERIAL && SHOP_SERIAL != ""){
-            $.ajax({
-              url : 'http://m.zb25.com.cn/saofu_mobile/checkUserBindStatus',
-              data : {
-                "serial" : SHOP_SERIAL
-              },
-              type : 'post',
-              cache : false,
-              dataType : 'json',
-              success : function(data) {
-                if (data != null) {
-                  var guildFocusStr = data.guildFocusStr;
-                  if(guildFocusStr != null && guildFocusStr == "1"){
-                    var hasBindedShop = data.hasBindedShop;
-                    if(hasBindedShop == "0"){
-                      var qrName = data.QRPublicName;
-                      var qrUrl = data.QRCodeURL;
-                      if(qrName != "" && qrUrl != ""){
-                        var params = qrName+"**"+qrUrl;
-                        followModule(params);
-                      }
-                    }
-                  }
-                }
-              },
-              error : function() {
-              }
-            });
-          }
-        });
+        //调用全局验证方法
+        checkUserBindedWechatFun(SHOP_SERIAL)
       }
     },
     mounted(){

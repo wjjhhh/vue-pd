@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="shop" @click="(shop.shopStatus==1||shop.shopStatus==4)&&goShop(shop.shopBranchId,shop.name,shop.linesvrId)">
+    <div class="shop" @click="(shop.shopStatus==1||shop.shopStatus==4||shop.shopStatus==6)&&goShop(shop.shopBranchId,shop.name,shop.linesvrId)">
       <img class="shop-logo" v-lazy="shop.shoplogo"/>
       <div class="shop-info">
         <div class="shop-name">{{shop.name}}</div>
@@ -11,11 +11,11 @@
             <span v-if="shop.shopStatus!=2&&shop.shopStatus!=5">排队</span>
           </span>
           <div class="shop-num-status">
-            <span class="shop-nums" v-if="shop.shopStatus==1||shop.shopStatus==4">{{shop.waittingNum}}桌</span>
+            <span class="shop-nums" v-if="shop.shopStatus==1||shop.shopStatus==4||shop.shopStatus==6">{{shop.waittingNum}}<span>桌</span></span>
             <span class="shop-status" v-if="shop.shopStatus==1">在等待</span>
             <span class="shop-status" v-if="shop.shopStatus==2">未到可取号时间</span>
             <span class="shop-status" v-if="shop.shopStatus==3">需到店取号</span>
-            <span class="shop-status" v-if="shop.shopStatus==4">需等待</span>
+            <span class="shop-status" v-if="shop.shopStatus==4||shop.shopStatus==6">需等待</span>
             <span class="shop-status" v-if="shop.shopStatus==5">到店即可就餐</span>
           </div>
 
@@ -25,7 +25,7 @@
     <div class="location" @click="mapGuide(shop)">
       <span class="icon-location"></span>
       <div class="shop-location">{{shop.location}}</div>
-      <div class="shop-distance">{{shop.distance}}KM</div>
+      <div class="shop-distance">{{shop.distance}}km</div>
     </div>
   </section>
 </template>
@@ -98,12 +98,15 @@
     border-bottom: 1px #e1e1e1 solid;
     position: relative;
     box-sizing: border-box;
+
   }
   .shop-name{
-    @include font-dpr(18px);
+    @include font-dpr(17px);
+    @include linesEllipsis(2);
+    word-break: break-all;
     color:#181818;
-    font-weight: bold;
     line-height: p2r(42px);
+
   }
   .shop-num{
     /*margin-top: p2r(84px);*/
@@ -115,13 +118,19 @@
   }
   .shop-status-name{
     @include font-dpr(11px);
-    width:p2r(104px);
+    /*width:p2r(104px);*/
     /*height: p2r(30px);*/
-    line-height: p2r(30px);
+    /*line-height: p2r(31px);*/
     display: inline-block;
     text-align: center;
     border-radius: p2r(4px);
     color:#fff;
+    span{
+      padding: 2px 4px;
+      text-align: center;
+      line-height: initial;
+      vertical-align: middle;
+    }
   }
   .shop-status-name1{
     background-color: #f74848;
@@ -133,11 +142,15 @@
     float:right;
   }
   .shop-nums{
-    @include font-dpr(19px);
+    @include font-dpr(22px);
     color:#f74848;
+    span{
+      color:#181818;
+      @include font-dpr(13px);
+    }
   }
   .shop-status{
-    color:#f74848;
+     color:#f74848;
     @include font-dpr(13px);
   }
   .shop-nums+.shop-status{
@@ -156,7 +169,7 @@
     width:$size;
     height:$size;
     position: absolute;
-    left:0;
+    left:p2r(-8px);
   }
   .shop-location{
     width:p2r(506px);

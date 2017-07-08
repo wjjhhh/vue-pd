@@ -32,3 +32,9 @@ new Vue({
   template: '<App/>',
   components: { App }
 })
+// // 异步引入fastclick 解决300ms延时问题
+require.ensure([], function (require) {
+  let fastclick = require("fastclick");
+  fastclick.attach(document.body);
+}, 'load_fastclick');
+

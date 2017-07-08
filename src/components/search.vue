@@ -5,17 +5,16 @@
         <span class="logo-location"></span>
         <span class="city">定位中<span class="dotting"></span></span>
       </span>
-      <span v-show="!positioning" class="citing">
+      <span v-show="!positioning" class="citing" @click="quitChooseCity(position)">
         {{position}}
       </span>
-
     </div>
     <span class="drop-down"></span>
-    <div class="fdjContainer" v-if="isShow">
-      <div class="fdj0" @click="fdj=!fdj" v-show="!fdj"></div>
+    <div class="fdjContainer" v-if="isShow&&(this.$store.getters.getLocation.longitude||searchShow)">
+      <div class="fdj0"  v-show="!fdj" @click="search"></div>
       <form class="fdjs"  v-show="fdj" @submit="submit">
-        <input placeholder="搜索" v-model="input" type="search"/>
-        <span class="cancel-search" @click="search">取消</span>
+        <input placeholder="搜索" v-model="input" type="text" ref="search"/>
+        <span class="cancel-search" @click="fdj=!fdj">取消</span>
         <span class="fdj1" @click="submit"></span>
       </form>
     </div>
@@ -32,7 +31,6 @@
         fdj:false,//搜索显示切换成放大镜或input,
         input:'',//搜索框内容,
         city:'',
-
      }
     },
     props:{
@@ -40,13 +38,17 @@
       positioning:'',//true:定位中,
       position:'',
     },
-    computed(){
-
+    computed:{
+      searchShow:function(){
+          return this.$store.getters.getCity
+      }
     },
     methods:{
       search(){
+          setTimeout(()=>{
+              this.$refs.search.focus();
+          },0)
         this.fdj=!this.fdj
-        this.$store.dispatch('setAttch',[]);
       },
       //选择城市，进入城市列表
       goCity(){
@@ -64,7 +66,12 @@
           this.$store.dispatch('setVagueShopBranchName',value)
           bus.$emit('requestShopList','search')
       },
-
+      quitChooseCity(position){
+         if(this.$route.name=='city'){
+           console.log('取消选择')
+           this.$router.go(-1)
+         }
+      }
     },
 
   }
@@ -153,6 +160,7 @@
       .cancel-search{
         margin-left: p2r(18px);
         @include font-dpr(14px);
+        vertical-align: middle;
       }
       .fdj1{
         @include fdj();

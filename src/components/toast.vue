@@ -29,12 +29,16 @@
     position: fixed;
     top:0;
     left:0;
-    z-index: 11;
+    z-index: 1000;
     background-color: transparent;
   }
   .toast{
     @include font-dpr(13px);
-    padding:4em 3em;
+    /*padding:2em 2em;*/
+    width:p2r(280px);
+    height:p2r(134px);
+    line-height: p2r(134px);
+    border-radius: p2r(20px);
     text-align: center;
     margin:auto;
     position: absolute;

@@ -14,32 +14,35 @@
         </div>
       </li>
     </ul>
-    <div class="btn-getNum" @click="getNumFun"><span v-if="lineUpList.isServiceCharge" style="margin-right: .4em">￥{{lineUpList.serviceCharge|priceFilter}}</span>取号</div>
-    <div class="getNum">
-      <header>取号优惠</header>
+    <div class="btn-getNum" @click="getNumFun" v-if="isGetQueue">查看我的排号</div>
+    <div class="btn-getNum" @click="getNumFun" v-else><span v-if="lineUpList.isServiceCharge" style="margin-right: .4em">￥{{lineUpList.serviceCharge|priceFilter}}</span>取号</div>
+    <div class="getNum" v-if="couponName||lineUpList.isShowInfo">
+      <header>等位优惠</header>
       <div class="couponInfo" v-if="couponName">
         <span class="logo"></span>
-        <div>取号成功送【】优惠券一张</div>
+        <div>线上取号成功送【{{couponName}}】优惠券一张<span v-if="couponOverdue">(已过期)</span></div>
       </div>
       <div class="explainInfo" v-if="lineUpList.isShowInfo">
         <span class="logo"></span>
         <div ref="line" class="line"></div>
       </div>
     </div>
-
-    <div class="getNumRule">
+    <!--后台不填取号须知和不用支付取号费的情况下不显示-->
+    <div class="getNumRule"  v-if="lineUpList.takeNumRemind||lineUpList.isServiceCharge">
       <header>取号须知：</header>
       <ul>
-        <li>排队取号仅限当前时间段使用，过号一桌自动顺延三个号。</li>
+        <li v-if="lineUpList.takeNumRemind">{{lineUpList.takeNumRemind}}</li>
         <li v-if="lineUpList.isServiceCharge">为避免线上随意取号，造成空号码影响排队秩序，商家向您收取线上取号服务费。</li>
         <li v-if="lineUpList.isServiceCharge">如过号或若您行程有变，取号支付服务费用概不退还。</li>
       </ul>
     </div>
-    <CheckPhoneDialog v-if="checkPhoneDialog" v-bind:min="min" v-bind:max="max" v-bind:numRange="numRange" v-bind:hasBind="hasBind"></CheckPhoneDialog>
-    <Loading v-show="loading"></Loading>
-    <transition name="fade">
+
+      <CheckPhoneDialog v-if="checkPhoneDialog" v-bind:min="min" v-bind:max="max" v-bind:numRange="numRange" v-bind:hasBind="hasBind" v-bind:noTime="noTime"></CheckPhoneDialog>
+
+      <Loading v-show="loading"></Loading>
+
       <Toast v-show="toasting" v-bind:content="content"></Toast>
-    </transition>
+
 
   </div>
 </template>
@@ -103,6 +106,19 @@
           })
       },
       getNumFun(){
+          //取过号，跳进详情页
+         if(this.isGetQueue==true){
+           this.$router.push({
+             name:'queueDetail',
+             params:{
+               orderId:this.orderId,
+               linesvrId:this.$route.params.linesvrId,
+               source:0
+             },
+           })
+           return;
+         }
+
         axios.get('/wxQueue/getUserInfo',{
             params:{
                 openId:this.$store.getters.getOpenId
@@ -126,9 +142,12 @@
       },
       //请求数据
       fetchData(){
+
         if(this.$route.name!='shopDetail'){
             return
         }
+
+        this.loading=true;
 //        var url='http://localhost:8081/mock/getShopConfigTable.json';
         var url='/wxQueue/getShopConfigTable'
         axios.get(url,{
@@ -148,6 +167,13 @@
               this.newline(this.lineUpList.discountInfo);
             }
             this.couponName=response.data.couponName
+            this.isGetQueue=response.data.isGetQueue
+            this.orderId=response.data.orderId;
+            this.shopBranchName=response.data.shopBranchName;
+            this.couponOverdue=response.data.couponOverdue;//是否过期
+            document.title=response.data.shopBranchName;
+
+
         }).catch((err)=>{
             console.warn(err)
           this.content='网络异常';
@@ -166,26 +192,51 @@
       var _this=this;
       this.fetchData();
       bus.$on('closeCheckPhone',function(){
+          console.log('关闭CheckPhone')
         _this.checkPhoneDialog=false;
+      })
+      bus.$on('hasBindFun',function(){
+          console.log('关闭验证')
+        _this.hasBind=true;
       })
       //取号，生成订单
       bus.$on('chooseEatNum',function(num){
          //计算人数在哪张桌，得出相应tableId，tableName,waittingTableNum,linesvrState
         _this.loading=true;
         var arr=_this.lineUpList.tableList,len=arr.length,tableId,tableName,waittingTableNum;
+
+//        while(len){
+//            //默认最多人数的桌型上限是0,设回20
+////            arr[len-1].limitNumber=20
+//            if(num>=arr[len-1].lowerNumber&&num<=arr[len-1].limitNumber){
+//                tableId=arr[len-1].id;
+//                tableName=arr[len-1].tabName;
+//                waittingTableNum=arr[len-1].waittingNum;
+//                break;
+//            }
+//            len--;
+//        }
+
         while(len){
-            if(num>=arr[len-1].lowerNumber&&num<=arr[len-1].limitNumber){
-                tableId=arr[len-1].id;
-                tableName=arr[len-1].tabName;
-                waittingTableNum=arr[len-1].waittingNum;
-                break;
+            if(num>=arr[len-1].lowerNumber){
+              tableId=arr[len-1].id;
+              tableName=arr[len-1].tabName
+              waittingTableNum=arr[len-1].waittingNum;
+              break;
+
+            }
+            if(num>=arr[len-1].lowerNumber&&arr[len-1].limitNumber){
+              tableId=arr[len-1].id;
+              tableName=arr[len-1].tabName
+              waittingTableNum=arr[len-1].waittingNum;
+              break;
             }
             len--;
         }
-//        console.log('this.isServiceCharge:',_this.isServiceCharge)
+
         //不需支付排队服务费
-//        _this.isServiceCharge=0.01;//写死用来测试
         if(_this.isServiceCharge==0){
+
           var url='/wxQueue/queueTakeNumber';
           axios.get(url,{
             params:{
@@ -194,22 +245,38 @@
               serviceCharge:_this.lineUpList.serviceCharge,
               linesvrId:_this.$route.params.linesvrId,
               userPhone:_this.$store.getters.getUserInfo.phoneNumber,
-//                userPhone:'15919156077',
               openId:_this.$store.getters.getOpenId,
               shopId:_this.$store.getters.getShopId,
-              shopBranchName:_this.$route.params.shopName,
+              shopBranchName:_this.shopBranchName,
               tableName:tableName,
               waittingTableNum:waittingTableNum,
 //                linesvrState:_this.lineUpList.linesvrStatus,
               linesvrState:0,
               remark:_this.lineUpList.takeNumRemind,
-              tableId:tableId
+              tableId:tableId,
+
             }
           }).then((response)=>{
+
             _this.loading=false;
+            if(response.data.attach==-200){
+              _this.content='你所排的桌型已达取号上限';
+              _this.toasting=true;
+              setTimeout(()=>{
+                _this.toasting=false;
+              },1500)
+              return;
+            }
+            //取号已达上限
+            if(response.data.attach==4002){
+              _this.checkPhoneDialog=true;
+              _this.noTime=true;
+              return;
+            }
             if(response.data.success){
               console.log('创建成功')
               console.log('相关信息:'+response.data.message)
+
               _this.$router.push({
                 name: 'getNum',
                 params:{
@@ -229,6 +296,7 @@
                 _this.toasting=false;
               },1500)
             }
+
           }).catch((err)=>{
             console.warn(err);
           })
@@ -243,7 +311,7 @@
                 shopBranchId:_this.$route.params.shopBranId,
                 openId:_this.$store.getters.getOpenId,
 //                totalFee:_this.lineUpList.serviceCharge,
-                totalFee:0.01,
+                totalFee:_this.lineUpList.serviceCharge,
                 tableName:tableName,
                 waittingTableNum:waittingTableNum,
                 linesvrState:_this.lineUpList.linesvrStatus,
@@ -254,7 +322,19 @@
                 tableId:tableId
               }
           }).then((response)=>{
-             if(response.data.code==1){
+            if(response.data.code==-200){
+              _this.content='你所排的桌型已达取号上限';
+              _this.toasting=true;
+              setTimeout(()=>{
+                _this.toasting=false;
+              },1500)
+              return;
+            }
+             if(response.data.code==4002){
+               _this.checkPhoneDialog=true;
+               _this.noTime=true;
+             }
+             else if(response.data.code==1){
                   window.location.href=response.data.message
              }
              else{
@@ -272,7 +352,9 @@
       })
     },
     watch:{
-      '$route':['fetchData']
+      '$route'(to,from){
+          this.fetchData();
+      }
     },
     data(){
       return{
@@ -286,7 +368,11 @@
         toasting:false,
         content:'系统繁忙，请重试',
         isServiceCharge:'',
-        couponName:''//优惠券名称
+        couponName:'',//优惠券名称
+        isGetQueue:false,//判断用户是否已经在这家门店取过号，且未过号未就餐（true=已取号，false=未取号）,
+        orderId:'',
+        shopBranchName:'',
+        noTime:false,//true为达到取号上限,
       }
     }
   }
@@ -354,7 +440,7 @@
     }
   }
   .tablePer{
-    @include font-dpr(11px);
+    @include font-dpr(12px);
     color:#545454;
     >span{
       vertical-align: top;
@@ -365,7 +451,7 @@
     line-height: p2r(104px);
 
     .num{
-      @include font-dpr(19px);
+      @include font-dpr(21px);
       color:#f74848;
       position: relative;
       top:p2r(2px);
@@ -388,7 +474,7 @@
       display:flex;
     }
     .line{
-      line-height: p2r(45px);
+      line-height: p2r(34px);
     }
   }
 
@@ -408,7 +494,7 @@
       vertical-align: top;
       margin-right: p2r(14px);
       position: relative;
-      top:p2r(4px);
+      top:-2px;
     }
     div{
       flex:1;
@@ -421,7 +507,7 @@
     }
   }
   .explainInfo{
-    margin:p2r(30px) 0 p2r(14px);
+    margin:p2r(15px) 0 p2r(14px);
      .logo{
       @include bg-image('../../assets/img/explain');
     }
@@ -444,4 +530,22 @@
     }
   }
 
+  /* 定义动画 */
+  .fade-enter-active,.fade-leave-active {
+    transition: all .1s ease;
+  }
+
+  /*
+  * 定义过渡
+  */
+  .fade-enter-active{
+    transform: translateY(0);
+  }
+  .fade-leave-active{
+    transform: translateY(100%);
+  }
+  /* 重要：定义初始状态 */
+  .fade-enter{
+    transform: translateY(100%);
+  }
 </style>

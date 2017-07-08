@@ -1,3 +1,4 @@
+
 <template>
   <div class="successcontainer">
     <div class="getSuccess">
@@ -21,14 +22,14 @@
         </div>
         <div class="line3 line">
           <span>还需等待</span>
-          <span class="num" v-if="queueDetailData.orderStatus==2||queueDetailData.orderStatus==3" style="color:#454545">
-            --
+          <span class="num" v-if="queueDetailData.orderStatus==1||queueDetailData.orderStatus==2||queueDetailData.orderStatus==3" style="color:#454545">
+            --桌
           </span>
           <span class="num" v-else style="color:#f74848">
             {{queueDetailData.waittingTableNum}}桌
           </span>
         </div>
-        <div class="line4 line">
+        <div class="line4 line" v-if="queueDetailData.serviceCharge>0">
           <span>支付金额</span>
           <span v-if="queueDetailData.serviceCharge>0">{{queueDetailData.serviceCharge|priceFilter}}元</span>
           <span v-else>--</span>
@@ -40,27 +41,37 @@
           </span>
         </div>
       </div>
-      <div class="tips">听到叫号请到迎宾台，过号不作废，过号一桌自动顺延3个号</div>
+      <div class="tips">{{queueDetailData.takeNumRemind}}</div>
     </div>
     <!--已过号和已取消，不显示优惠券-->
 
-    <div class="coupon" v-if="queueDetailData.orderStatus!=2&&queueDetailData.orderStatus!=3">
-      <div class="logo-coupon"></div>
-      <div class="couponDetail">
-        <div>
-          <div class="couponName">{{coupon.cardName}}</div>
-          <div class="couponNum">{{coupon.cashReduceCost}}元（满{{coupon.cashLeastCost}}可用）</div>
+    <div v-if="queueDetailData.orderStatus!=2&&queueDetailData.orderStatus!=3">
+      <div class="coupon" v-if="coupon.couponId">
+        <div class="logo-coupon"></div>
+        <div class="couponDetail">
+          <div v-if="coupon.cardType=='cash'">
+            <div class="couponName">{{coupon.cardName}}</div>
+            <div class="couponNum">{{coupon.cashReduceCost}}元（满{{coupon.cashLeastCost}}可用）</div>
+          </div>
+          <div v-if="coupon.cardType=='discount'">
+            <div class="couponName">{{coupon.cardName}}</div>
+            <div class="couponNum">{{(100-coupon.discount)/10}}折</div>
+          </div>
+          <div v-if="coupon.cardType=='gift'">
+            <div class="couponName">{{coupon.cardName}}</div>
+            <div class="couponNum">{{coupon.gift}}</div>
+          </div>
+          <div v-if="coupon.cardType=='general_coupon'">
+            <div class="couponName">{{coupon.cardName}}</div>
+            <div class="couponNum">{{coupon.subTitle}}</div>
+          </div>
+          <span class="btn-get" :class="coupon.couponStatus==1&&'btn-get-1'" @click="getCoupon">
+            <span v-if="coupon.couponStatus==1">已领取</span>
+            <span v-else-if="coupon.couponStatus==0">领取</span>
+          </span>
         </div>
-        <span class="btn-get" :class="coupon.couponStatus==1&&'btn-get-1'" @click="getCoupon">
-          <!--<span v-if="couponGet==0">领取</span>-->
-          <!--<span v-else-if="couponGet==1">立即使用</span>-->
-          <!--<span v-else-if="couponGet==2">已领完</span>-->
-          <!--<span v-else-if="couponGet==3">已使用</span>-->
-          <span v-if="coupon.couponStatus==1">已领取</span>
-          <span v-else-if="coupon.couponStatus==0">领取</span>
-        </span>
       </div>
-    </div>
+     </div>
     <Toast v-show="toasting" v-bind:content="content"></Toast>
     <Loading v-show="loading"></Loading>
   </div>
@@ -100,11 +111,14 @@
 
     methods:{
       getCoupon(){
-        if(this.coupon.couponStatus==1)return;
+          //假如已经领过此券
+        if(this.coupon.couponStatus==1){
+            this.takeCouponCentre();
+            return;
+        }
 //        console.log('进入券详情页')
         this.loading=true;
         var url='/wxQueue/receiveCoupon'
-        console.log(this.coupon)
         this.$http.post(url,{
           couponId:this.coupon.couponId,
           openId:this.$store.getters.getOpenId,
@@ -112,37 +126,64 @@
           linesvrId:this.$route.params.linesvrId,
           orderId:this.$route.params.orderId
         }).then((response)=>{
-//            if(this.coupon.listing==0){
-//                this.content='待上架'
-//            }
-//            else if(this.coupon.listing==2){
-//              this.content='已下架'
-//            }
-//            else if(this.coupon.listing==1){
               //领取成功
               if(response.data.code==1){
-                this.coupon.couponStatus=1
-                //2秒后跳转
-                window.setTimeout(function(){
+                  if(this.coupon.couponStatus=1){
+                      this.content='已领取'
+                  }
+                  else{
+                    this.coupon.couponStatus=1
+                    this.content='领取成功'
+                    this.toasting=true;
+                    var _this=this;
+                    window.setTimeout(()=>{_this.toasting=false},1500)
+                  }
+                //设置session，防止缓存
+                sessionStorage.PAGEVERSION=new Date().getTime();
                   window.location.href=response.data.message;
-                },2000)
+
               }
               //领取失败
               else{
                 this.content=response.data.message;
+                this.toasting=true;
+                var _this=this;
+                window.setTimeout(()=>{_this.toasting=false},1500)
               }
 
-//            }
           this.loading=false;
-          this.toasting=true;
-          var _this=this;
-          window.setTimeout(()=>{_this.toasting=false},1500)
         }).catch((error)=>{
           console.warn(error)
         })
-
       },
-
+      //点击已领取券
+      takeCouponCentre(){
+          console.log('领取过')
+        this.loading=true;
+        var url='/wxQueue/takeCouponCentre'
+        this.$http.post(url,{
+          couponId:this.coupon.couponId,
+          openId:this.$store.getters.getOpenId,
+//          shopId:this.$store.getters.getShopId,
+//          linesvrId:this.$route.params.linesvrId,
+          orderId:this.$route.params.orderId
+        }).then((response)=>{
+          //成功跳转
+          if(response.data.code==1){
+              window.location.href=response.data.url;
+          }
+          //领取失败
+          else{
+            this.content='网络异常';
+            this.toasting=true;
+            var _this=this;
+            window.setTimeout(()=>{_this.toasting=false},1500)
+          }
+          this.loading=false;
+        }).catch((error)=>{
+          console.warn(error)
+        })
+      }
     },
     data(){
       return{
@@ -176,12 +217,13 @@
     overflow: hidden;
   }
   .suc{
-  @include font-dpr(15px);
+  @include font-dpr(16px);
     color:#181818;
     text-align: center;
+
   }
   .detail{
-    margin:p2r(64px) p2r(24px) 0;
+    margin:p2r(36px) p2r(24px) 0;
     border-bottom: 1px dotted #e1e1e1;
   }
   .line,.line1{
@@ -196,12 +238,15 @@
      text-align: right;
    }
   }
+    .shopName{
+      display: -webkit-box;
+    }
   }
   .line{
     line-height:p2r(24px);
     margin-bottom:p2r(28px);
   span{
-  @include font-dpr(13px);
+  @include font-dpr(14px);
   &:first-child{
      color:#7d7d7d;
    }
@@ -212,8 +257,9 @@
   }
   .line1{
     line-height: p2r(48px);
-    padding-bottom:p2r(32px);
+    padding-bottom:p2r(36px);
     border-bottom: 1px #e1e1e1 dotted;
+    position: relative;
     .status{
       width:initial;
       @include font-dpr(11px);
@@ -221,12 +267,17 @@
     }
   }
   .shopName{
-  @include font-dpr(15px);
+  @include font-dpr(16px);
+  @include linesEllipsis(2);
     color:#181818;
+    word-break: break-all;
   }
   .numName{
-  @include font-dpr(22px);
+  @include font-dpr(25px);
     color:#f74848;
+    position: absolute;
+    right: 0;
+    top: 0;
   }
   .line2{
     margin-top:p2r(32px);
@@ -275,6 +326,12 @@
     right:0;
     top:50%;
     margin-top: - $h/2;
+    -webkit-appearance:none;
+    outline:none;
+    span{
+      -webkit-appearance:none;
+      outline:none
+    }
   }
   .btn-get-1{
     background-color: #e1e1e1;

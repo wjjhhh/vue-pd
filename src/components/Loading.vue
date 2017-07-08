@@ -28,8 +28,8 @@
     position: fixed;
     left:0;
     top:0;
-    z-index:10;
-    background-color: rgba(0,0,0,.5);
+    z-index:999;
+    background-color: rgba(0,0,0,.4);
   }
   .load{
     position: absolute;
@@ -39,7 +39,7 @@
     top: 5.6rem;
     left: 50%;
     margin-left: -2.13333rem;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.6);
     text-align: center;
     border-radius: 0.16rem;
     color: #FFFFFF;

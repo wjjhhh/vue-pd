@@ -19,5 +19,7 @@ export const SAVE_CITY_LIST = 'SAVE_CITY_LIST'; //保存拥有门店的id列表
 
 export const SAVE_VAGUESHOPBRANCHNAME = 'SAVE_VAGUESHOPBRANCHNAME'; // 保存模糊搜索门店名
 
+export const SAVE_FATHER_ID = 'SAVE_FATHER_ID'// 保存所选城市faterId
+
 
 

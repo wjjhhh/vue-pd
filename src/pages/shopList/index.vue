@@ -2,7 +2,7 @@
 
     <div style='overflow: auto;' :style='{height:shopListHeight}' class="shoplists" v-infinite-scroll="onLoadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="1" ref="scrollContainer">
       <!--定位完-->
-      <div v-if="hasLocation">
+      <div v-if="hasLocation||cityId">
         <!--有门店-->
         <div v-if="hasQueue">
           <Shop :shop="shop" v-for= "shop in shopBranchList" :key="shop.id"></Shop>
@@ -15,7 +15,7 @@
           <div v-if="searchIn">
             <div>抱歉，没有您的搜索结果</div>
           </div>
-          <div v-if="cityIn">
+          <div v-if="!searchIn&&cityIn">
             <div>当前城市无可排队门店</div>
           </div>
         </div>
@@ -39,9 +39,12 @@
   import $util from '../../utils/index.js'
   import $cookies from '../../utils/cookies.js'
   import {bus} from '../../utils/bus.js'
+  import Queue from '../../components/Queue.vue'
+  import $cache from '../../utils/cache.js'
   export default{
     components:{
-      Shop
+      Shop,
+      Queue
     },
 
     data(){
@@ -55,28 +58,51 @@
         busy:false,
         specialNo:false,//商户列表过少时出现没有更多门店
         vagueShopBranchName:'',
-        hasLocation:true,//true为已成功定位,
         hasQueue:true,//false为没有队可排
         searchResult:true,//false为没搜索结果
         cityIn:false,//true为当前城市没门店
-        searchIn:false,//true为搜索结果没有
+        searchIn:false,//true为搜索结果没有,
+
+//        isHasNextPage:false,//是否有下一页
       }
+    },
+    props:{
+
     },
     watch:{
       '$route':['refreshData'],
+    },
+    computed:{
+      hasLocation(){
+          return this.$store.getters.getLocation.latitude||this.$store.getters.getLocation.longitude;
+      },
+      cityId(){
+          return this.$store.getters.getCityId
+      },
+      cityName(){
+          return this.$store.getters.city
+      }
     },
     methods:{
       //定位
       location(){
           console.log('手动开启定位')
-        bus.$emit('handLocation')
+        this.$router.go(0)
+//        bus.$emit('handLocation')
       },
       //请求数据
       fetchData(params,type){
+//     没定位（没经纬度）
+//        if(!this.$store.getters.getLocation.longitude||!this.$store.getters.getLocation.longitude){
+//            this.hasLocation=false;
+
+//            return;
+//        }
         this.loading=true;
         this.specialNo=false;
 //        var url='http://localhost:8081/mock/shopList.json';
         var url='/wxQueue/getShopList';
+
         var _tempArr=[];
         axios.get(url,{
           params:{
@@ -89,21 +115,28 @@
 //            shopBranchIdList:this.$store.getters.getShopBranchList,
             cityId:this.$store.getters.getCityId,
             vagueShopBranchName:this.$store.getters.getVagueShopBranchName,
-            cityName:this.$store.getters.getCity
-          }
-        })
-        .then((response)=>{
+            cityName:this.$store.getters.getCity,
+            fatherId:this.$store.getters.getFatherId
+          },
+          timeout:30000
+        }).then((response)=>{
           document.title='门店列表'
            this.loading=false;
-            this.$store.dispatch('setCityList',response.data.shopBranchInfo.cityList||'');
+            this.$store.dispatch('setCityList',response.data.shopBranchInfo.cityList);
+            this.hasNext=response.data.shopBranchInfo.isHasNextPage;
+            //缓存cityList(1天)
+            var timeout=60*60*24;
+            $cache.set('cityList',response.data.shopBranchInfo.cityList,timeout)
             //返回空
             if((typeof response.data)&&Array.isArray(response.data)){
+                console.log('返回空')
                 this.shopBranchList=[];
                 this.specialNo=true;
-                this.hasLocation=false;
+//              bus.$emit('hasLocationFun',false)
                 return;
             }
             _tempArr=response.data.shopBranchInfo.shopBranchList;
+
             if(_tempArr.length==0){
                 //搜索进来
               if(type=='search'){
@@ -112,21 +145,23 @@
               }
                //非搜索进来
               else{
+                console.log('非搜索')
+
                   //靠定位城市
                 if(this.$store.getters.getCity){
                   this.hasQueue=false;
                   this.cityIn=true;
-                  this.hasLocation=true;
+
                 }
                 //靠经纬度（城市）
                 else{
-                  this.hasLocation=true
                 }
               }
             }
             else{
-              this.hasLocation=true;
               this.hasQueue=true;
+              this.cityIn=true;
+
             }
             this.specialNo=true;
             if (params.page != 1 && this.page + 1 != params.page) {
@@ -143,15 +178,15 @@
               this.page = params.page;
               this.shopBranchList = this.shopBranchList.concat(_tempArr)
             }
-            if (this.page > 2) {
-                this.hasNext = false;
-            }
-            else {
-                this.hasNext = true;
-            }
+//            if (this.page > 2) {
+//                this.hasNext = false;
+//            }
+//            else {
+//                this.hasNext = true;
+//            }
 //            this.busy=false;
-        })
-        .catch((err)=>{
+        }).catch((err)=>{
+          alert('网络异常')
           console.warn(err);
         })
 
@@ -169,7 +204,7 @@
       },
       //刷新
       refreshData(type){
-          if(this.$route.name=='shopDetail'||this.$route.name=='queue')return
+          if(this.$route.name=='shopDetail'||this.$route.name=='queue'||this.$route.name=='city'||this.$route.name=='queueDetail')return
 //          console.log(this.$route.name)
 //        if(this.$route.name!='shopList')return;
         let params={
@@ -205,21 +240,16 @@
         _this.shopBranchList=[]
         _this.refreshData(type)
       })
-      bus.$on('hasLocationFun',function(bool){
-        _this.hasLocation=bool;
 
-      });
     },
     mounted(){
-//      this.$nextTick(function () {
-//        this.shopListContainerHeight();
-//      })
+      this.$nextTick(function () {
+        this.shopListContainerHeight();
+      })
 //      window.addEventListener('resize',this.shopListContainerHeight)
 //      this.$refs.scrollContainer.style.paddingBottom=this.$refs.myOdder.offsetHeight+'px';
     },
-    props:{
-//      hasLocation:false,//true为已成功定位,
-    },
+
 
   }
 </script>
@@ -237,7 +267,7 @@
   }
   .btn-my-odder{
     @include font-dpr(16px);
-    $h:p2r(100px);
+    $h:p2r(88px);
     width:100%;
     height: $h;
     line-height: $h;
@@ -245,13 +275,14 @@
     background-color: $color;
     text-align: center;
     position: fixed;
-    z-index:2;
+    z-index:10;
     bottom:0;
     left:0;
   }
   .shim{
     height:p2r(100px);
     width:100%;
+    opacity: 0;
   }
   .tips{
     @include font-dpr(13px);

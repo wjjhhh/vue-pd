@@ -40,5 +40,9 @@ export default {
   //保存模糊搜索门店名
   setVagueShopBranchName:({commit},vagueShopBranchName)=>{
     commit(types.SAVE_VAGUESHOPBRANCHNAME,vagueShopBranchName)
+  },
+  //保存faterId
+  setFatherId:({commit},fatherId)=>{
+    commit(types.SAVE_FATHER_ID,fatherId)
   }
 }

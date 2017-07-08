@@ -33,18 +33,15 @@
       },
       //拉取数据
       fetchData(){
+
           if(this.$route.name!='getNum')return;
+        this.afterFetch=false;
+//        console.log('有刷新')
+
 //          var url='http://localhost:8081/mock/queueDetail.json';
-//          axios.get(url,{
-//            params:{
-//                orderId:123
-//            }
-//          }).then((response)=>{
-//              this.queueDetailData=response.data;
-//          }).catch((error)=>{
-//              console.warn(error)
-//          })
-        var url='/wxQueue/noMoneySuccessOrder',_this=this;
+
+        var url='/wxQueue/noMoneySuccessOrder';
+          var _this=this;
         axios.get(url,{
             params:{
               orderId:_this.$route.params.orderId,
@@ -63,15 +60,20 @@
             this.queueDetailData.waittingTableNum=obj.waittingTableNum;
             this.queueDetailData.serviceCharge=obj.serviceCharge;
             this.queueDetailData.waittingTime=obj.averageWaitTime;
+            this.queueDetailData.takeNumRemind=obj.takeNumRemind;
             this.coupon.cardName=obj.cardName;
             this.coupon.cashLeastCost=obj.cashLeastCost;
             this.coupon.cashReduceCost=obj.cashReduceCost;
             this.coupon.couponId=obj.couponId;
             this.coupon.listing=obj.listing;
-//            this.coupon.couponStatus=obj.couponStatus;
-            this.coupon.couponStatus=0;
-            this.afterFetch=true;
+            this.coupon.cardType=obj.cardType;
+            this.coupon.discount=obj.discount;
+            this.coupon.gift=obj.gift;
+            this.coupon.subTitle=obj.subTitle;
+            this.coupon.couponStatus=obj.couponStatus;
+            console.log('title:'+obj.shopBranchName)
             document.title=obj.shopBranchName;
+            this.afterFetch=true;
         }).catch((error)=>{
             console.warn(error)
         })
@@ -104,4 +106,5 @@
       margin: p2r(72px) auto p2r(28px);
       overflow: hidden;
     }
+
 </style>
